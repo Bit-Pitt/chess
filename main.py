@@ -1,5 +1,6 @@
 from pezzi import *
 from utils import * 
+from partite_debug import *
 
 #Crea scacchiera vuota   (lista di liste "matrice")
 def crea_scacchiera():
@@ -15,51 +16,55 @@ def crea_scacchiera():
 
 # La funzione se la mossa è valida cambia effettivamente la scacchiera   [in esteso sotto]
 # @input (es nome=P csrc=(1,0) cdest=(2,0))  {primo pedone A2 to A3}
-# @param scacchiera , nome pezzo, casella src, casella dest
+# @param scacchiera , nome pezzo, casella src, casella dest , pezzi_persi 
 # @return se la mossa è valida
-def muovi(scacchiera, nome, csrc, cdest,giocatore):
+def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
     piece = scacchiera[csrc[0]][csrc[1]]
     if not controlla_nome(piece,nome) or controlla_giocatore(giocatore,piece):
         return False
     
-    possibili_dest = piece.destinations(scacchiera,csrc,giocatore)
+    
+    possibili_dest = get_possible_destination(scacchiera,piece,csrc,giocatore)
+    #if possibili_dest == "end-game":
+        
 
     if cdest in possibili_dest:
-        piece.sposta(scacchiera,csrc,cdest)
+        pezzo_perso = piece.sposta(scacchiera,csrc,cdest)
+        if pezzo_perso != "empty":
+            pezzi_persi.append(pezzo_perso)
         return True
     else:
         return False
 
-'''     Regole da seguire
-# se mossa valida ovvero:
-    # - la casella è raggiungibile  [fatti tornare dalla classe lista di coppie (i,j)]
-    # - se non passa attraverso altri pezzi (eccez cavallo)
-    # - se non è inchiodato!  {controllo preventivo da aggiungere a tutti}
 
-    #altri casi:  per il re se quella casella è già minacciata
-    # mosse speciali (arrocco /  en-passant)
-    # o se sono sotto scacco
-    # promozione pedone
-
-    #in tal caso
-    # muovi pezzo (libera casella di partenza! "==empty"), occupa la nuova ==>se catturi un pezzo stampa tipo che è stato perso il pezzo ..
-'''
-
-
-def start_game(scacchiera):
+# Funzione un po troppo grossa
+def start_game(scacchiera,modalita="due giocatori"):
+    modalita="DEBUG"
+    partita_debug = partite["1"]
 
     g1= "White"         #giocatori  
     g2 = "Black"
     g_di_turno = g1
+    pezzi_persi_w,pezzi_persi_b = [] , []
 
     #ciclo di gioco
     while (True):
         print(g_di_turno+" turn")
+    
+        pezzi_persi = pezzi_persi_b if g_di_turno == g1 else pezzi_persi_w      #es se turno del White allora può perderli il black
 
         #prova mossa
         valid_move = False
         while not valid_move:
-            mossa = input("Immetti mossa: (es pedone da A2 a A3 -->  P A2 A3):  ")
+            mossa = []
+            if modalita == "due giocatori":
+                mossa = input("Immetti mossa: (es pedone da A2 a A3 -->  P A2 A3):  ")
+            if modalita == "DEBUG":
+                if len(partita_debug) == 0:
+                    print("Partita simulata finita")
+                    return 
+                mossa = partita_debug[0]
+                partita_debug.pop(0)
             mossa = mossa.split()
             if len(mossa) != 3:
                 valid_move = False
@@ -67,18 +72,18 @@ def start_game(scacchiera):
                 nome= traduci_nome(mossa[0])
                 csrc = stringTOpos(mossa[1])   
                 cdest = stringTOpos(mossa[2])             
-                valid_move = muovi(scacchiera, nome, csrc, cdest, g_di_turno)
+                valid_move = muovi(scacchiera, nome, csrc, cdest, g_di_turno,pezzi_persi)
             
             if not valid_move:
                 print("Mossa non valida,  mossa effettuata:"+str(mossa))
 
         #cambio turno
-        if g_di_turno == g1:
-            g_di_turno = g2 
-        else:
-            g_di_turno = g1
+        g_di_turno = g2 if g_di_turno == g1 else g1
 
         print_scacchiera(scacchiera)
+        #print_pezzi_persi(pezzi_persi_w,"White")
+        #print_pezzi_persi(pezzi_persi_b,"Black")
+        print(vantaggio(scacchiera))
 
 
 
