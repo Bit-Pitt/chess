@@ -34,6 +34,7 @@ def valore_pezzo(pezzo):
         return 5
     if pezzo.my_name() == "Queen":
         return 9
+    raise Exception("Nome del pezzo non riconosciuto [fun:valore_pezzo]")
 
 
 # converte pos in stringa to mat indexes   "B5-->[4][1]"
@@ -50,6 +51,17 @@ def stringTOpos(string):
 def traduci_nome(iniziale):
     if iniziale.upper() == "P":
         return "Pawn"
+    if iniziale.upper() == "R":
+        return "Rook"
+    if iniziale.upper() == "K":
+        return "King"
+    if iniziale.upper() == "Q":
+        return "Queen"
+    if iniziale.upper() == "B":
+        return "Bishop"
+    if iniziale.upper() == "C":
+        return "Knight"
+    raise Exception("Iniziale del pezzo non riconosciuta [fun: traduci_nome]")
 
 
 
@@ -151,7 +163,11 @@ def caselle_valide(caselle):
             return False
     return True
 
-'''     Regole da seguire       --> funzione da usare "caselle minacciate" da nemico
+'''     Regole da seguire       
+--> funzione da usare "caselle controllate" da nemico [!= da destinations anche se simile] 
+--> per fun caselle controllate (simile a "destinations") usare le stesse utility del tipo:
+     [caselle_diagonali -->  restituisce TUTTE le caselle diag poi dest filtra quelle in cui può andare l'alfiere mentre "caselle controllate" 
+                                aggiunge anche quelle che effettivametne controlla, poi la funzione "raggi_x" che servirà per le possibili inchiodature un ulteriore filtro diverso
 # se mossa valida ovvero:
     # - la casella è raggiungibile  [fatti tornare dalla classe lista di coppie (i,j)]
     # - se non passa attraverso altri pezzi (eccez cavallo)
@@ -173,3 +189,95 @@ def get_possible_destination(scacchiera,piece,csrc,giocatore):
     # aggiungi mossa en-passant   / arrocco   [magari come speciali]
     destinations = piece.destinations(scacchiera,csrc,giocatore)
     return destinations
+
+# @return tutte le caselle (i,j) seguendo il movimento della torre [scacchiera vuota]
+def movimento_torre(csrc):
+    i = csrc[0]
+    j = csrc[1]
+    pos_verticali = []
+    for k in range(8):
+        if k != i:                  #non voglio mettere la posizione dove si trova il pezzo
+            pos_verticali.append((k,j))
+    pos_orizzontali = []
+    for k in range(8):
+        if k != j:                  #non voglio mettere la posizione dove si trova il pezzo
+            pos_orizzontali.append((i,k))
+
+    return pos_orizzontali+pos_verticali
+
+
+# @return Es giocatore = "White" se pezzo è del black --> True
+def pezzo_nemico(pezzo,giocatore):
+    if pezzo.colore.upper() == giocatore.upper():
+        return False
+    else:
+        return True
+
+
+# SE destinazioni=True
+# @return le possibili destinazioni del pezzo se può muoversi in verticale
+# @return case movimento in avanti [mi fermo se incontro un pezzo, se nemico aggiungo la pos]
+# SE case_controllate=True
+# @return tutte le case controllate dal pezzo in direzione verticale  
+# @return case movimento in avanti [mi fermo se incontro un pezzo,in OGNI CASO aggiungo la pos]
+
+def movimento_verticale(scacchiera,csrc,giocatore,avanti,destinazioni=False,case_controllate=False):
+    if destinazioni  and case_controllate:
+        raise Exception("Internal errore in movimento_verticale")
+    dest = []
+    i = csrc[0]         #pos (i,j) del pezzo
+    j = csrc[1]  
+
+    if avanti == True:          #se in vanti mi muovo da (i,j) del pezzo in (i+1..8,j)
+        l = i+1 
+        r = 8    
+        passo = 1 
+    else:                       #indietro   (i,j) --> (i-1..0,j)
+        l = i-1
+        r = -1 
+        passo = -1 
+
+    #mi muovo e mi fermo se incontro un pezzo 
+    for k in range(l,r,passo):
+        pos = (k,j)
+        if casella_vuota(scacchiera,pos):
+            dest.append(pos)
+        else:
+            pezzo = scacchiera[k][j]
+            if case_controllate:            #se voglio case controllate dal pezzo aggiungo a prescindere
+                dest.append(pos)
+            if destinazioni  and pezzo_nemico(pezzo,giocatore):             #se voglio le destinazioni del pezzo solo se il pezzo è nemico
+                dest.append(pos)
+            break 
+    return dest
+
+# Analogo di "destinazioni_verticali"
+def movimento_orizzontale(scacchiera,csrc,giocatore,destra,destinazioni=False,case_controllate=False):
+    if destinazioni  and case_controllate:
+        raise Exception("Internal errore in movimento_orizzontale")
+    dest = []
+    i = csrc[0]         #pos (i,j) del pezzo
+    j = csrc[1]  
+
+    if destra == True:          #se dx mi muovo da (i,j) del pezzo in (i,j+1..8)
+        l = i+1 
+        r = 8    
+        passo = 1 
+    else:                       #indietro   (i,j) --> (i,j-1..0)
+        l = i-1
+        r = -1 
+        passo = -1 
+
+    #mi muovo e mi fermo se incontro un pezzo, se nemico aggiungo la pos
+    for k in range(l,r,passo):
+        pos = (i,k)
+        if casella_vuota(scacchiera,pos):
+            dest.append(pos)
+        else:
+            pezzo = scacchiera[k][j]
+            if case_controllate:            #se voglio case controllate dal pezzo aggiungo a prescindere
+                dest.append(pos)
+            if destinazioni  and pezzo_nemico(pezzo,giocatore):             #se voglio le destinazioni del pezzo solo se il pezzo è nemico
+                dest.append(pos)
+            break 
+    return dest

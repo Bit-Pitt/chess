@@ -14,7 +14,7 @@ def crea_scacchiera():
 
 
 
-# La funzione se la mossa è valida cambia effettivamente la scacchiera   [in esteso sotto]
+# MOSSA VALIDA se la dest è una possibile destinazione
 # @input (es nome=P csrc=(1,0) cdest=(2,0))  {primo pedone A2 to A3}
 # @param scacchiera , nome pezzo, casella src, casella dest , pezzi_persi 
 # @return se la mossa è valida
@@ -93,12 +93,18 @@ if __name__ == "__main__":
     #Creazione schacchiera e pezzi
     scacchiera = crea_scacchiera()
 
-    #pedoni biani --> 2°riga in tutte le col quindi  [1,*]
+    # es pedoni biani --> 2°riga in tutte le col quindi  [1,*]
     for i in range(8):
         pw = Pedone("white")
         pb = Pedone("black")
         scacchiera[1][i] = pw 
         scacchiera[6][i] = pb
+
+    scacchiera[0][0] = Torre("white")
+    scacchiera[0][7] = Torre("white")
+    scacchiera[7][0] = Torre("black")
+    scacchiera[7][7] = Torre("black")
+
 
     print_scacchiera(scacchiera)
 
