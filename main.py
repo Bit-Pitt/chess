@@ -1,6 +1,8 @@
-from pezzi import *
-from utils import * 
-from partite_debug import *
+from pezzi.pedone import Pedone
+from pezzi.torre import Torre
+from partite_debug import partite
+from utils.graphic_utils import *
+from utils.logic_utils import *
 
 #Crea scacchiera vuota   (lista di liste "matrice")
 def crea_scacchiera():
@@ -57,14 +59,17 @@ def start_game(scacchiera,modalita="due giocatori"):
         valid_move = False
         while not valid_move:
             mossa = []
-            if modalita == "due giocatori":
+            
+            if modalita == "due giocatori" or len(partita_debug) == 0:
                 mossa = input("Immetti mossa: (es pedone da A2 a A3 -->  P A2 A3):  ")
-            if modalita == "DEBUG":
-                if len(partita_debug) == 0:
-                    print("Partita simulata finita")
-                    return 
+
+            if modalita == "DEBUG" and len(partita_debug) > 0:
                 mossa = partita_debug[0]
                 partita_debug.pop(0)
+                if len(partita_debug) == 0:
+                    print("Da adesso partita interattiva")
+            
+            
             mossa = mossa.split()
             if len(mossa) != 3:
                 valid_move = False

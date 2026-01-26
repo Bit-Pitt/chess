@@ -1,40 +1,6 @@
-'''
-    In questo file sono contenute le classi che rappresentano i vari pezzi
-'''
-from utils import * 
-# TODO: per miglior pulizia codice bisogna tenere privati attributi privati e gestibili solo dalla classe come il colore del pezzo etc
-#Classe generica (funge da "interfaccia" per descrivere il comportamento ovvero metodi in comune con le classi che la estendono)
-class Pezzo:
-    def __init__(self,colore):
-        self.colore = colore            
+from utils.logic_utils import *
+from .pezzo import Pezzo
 
-    #Sposto il pezzo (già effettuati i controlli necessari)
-    # Porto il pezzo nella nuova posizione
-    # Svuoto la casella di partenza
-    def sposta(self,scacchiera,csrc,cdest):
-        pezzo_catturato = "empty"
-        scacchiera[csrc[0]][csrc[1]] = "empty"
-        if not casella_vuota(scacchiera,cdest):
-            print("Catturato un pezzo!")
-            pezzo_catturato =  scacchiera[cdest[0]][cdest[1]]
-        scacchiera[cdest[0]][cdest[1]] = self 
-        return pezzo_catturato
-
-    #   @return tutte le caselle che il pezzo può raggiungere da quella posizione
-    def destinations(self, scacchiera, csrc, giocatore):
-        return (-1,-1)
-    
-    # @return tutte le caselle controllate dal pezzo (diverse da quelle che può raggiungere) 
-    def case_controllate(self, scacchiera, csrc, giocatore=""):
-        return (-1,-1)
-    
-    def my_name(self):
-        return "Piece"
-    
-    #Tengo questa informazioni solo per Torre pedone e re
-    def has_mai_mosso(self):
-        return False
-        
 class Pedone(Pezzo):
     def __init__(self,colore):
         super().__init__(colore)
@@ -144,58 +110,3 @@ class Pedone(Pezzo):
 
     def has_mai_mosso(self):
         return True
-    
-class Torre(Pezzo):
-    def __init__(self,colore):
-        super().__init__(colore)
-        self.nome = "Rook"
-        self.mai_mosso = True   #per possibile arrocco
-
-    def sposta(self,scacchiera,csrc,cdest):
-        super().sposta(scacchiera,csrc,cdest)  
-        self.mai_mosso = False
-    
-
-    # Le possibili destinazioni della torre:
-    # - 1) si muove a  "+"  [destinazioni si blocca se incontra un pezzo nemico / amico e sono casi diversi]
-    # @return tutte le destinazioni possibili (i,j)
-    def destinations(self, scacchiera, csrc, giocatore):
-        pezzo = scacchiera[csrc[0]][csrc[1]]
-        if pezzo.my_name() != "Rook":
-            raise TypeError("[Internal error] Non è presente un pedone nella casella!")
-        dest = []
-
-        dest += movimento_verticale(scacchiera,csrc,giocatore,avanti = True,destinazioni=True)
-        dest += movimento_verticale(scacchiera,csrc,giocatore,avanti = False,destinazioni=True)
-        dest += movimento_orizzontale(scacchiera,csrc,giocatore,destra = True,destinazioni=True)
-        dest += movimento_orizzontale(scacchiera,csrc,giocatore,destra = False,destinazioni=True)
-        print(f"Debug, possibili destinazioni da torre: {dest}")
-        return dest
-    
-
-    def case_controllate(self, scacchiera, csrc, giocatore):
-        pezzo = scacchiera[csrc[0]][csrc[1]]
-        if pezzo.my_name() != "Rook":
-            raise TypeError("[Internal error] Non è presente un pedone nella casella!")
-        pos_controllate = []
-
-        pos_controllate += movimento_verticale(scacchiera,csrc,giocatore,avanti = True,case_controllate=True)
-        pos_controllate += movimento_verticale(scacchiera,csrc,giocatore,avanti = False,case_controllate=True)
-        pos_controllate+= movimento_orizzontale(scacchiera,csrc,giocatore,destra = True,case_controllate=True)
-        pos_controllate += movimento_orizzontale(scacchiera,csrc,giocatore,destra = False,case_controllate=True)
-        print(f"Debug, case controllate dalla torre: {pos_controllate}")
-        return pos_controllate
-    
-    def my_name(self):
-        return "Rook"
-    
-    def print_my_name(self):
-        c = self.colore[0]
-        return "R"+c
-
-    #se ha la variabile "mai_mosso"
-    def has_mai_mosso(self):
-        return True
-    
-
-
