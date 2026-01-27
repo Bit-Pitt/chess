@@ -18,7 +18,8 @@ class Pedone(Pezzo):
     # - 3) se pedone bianco si muove in avanti di una riga se nero indietro!
     # @return tutte le destinazioni possibili (i,j)
     def destinations(self, scacchiera, csrc, giocatore):
-        pezzo = scacchiera[csrc[0]][csrc[1]]
+        pos = (csrc[0],csrc[1])
+        pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Pawn":
             raise TypeError("[Internal error] Non è presente un pedone nella casella!")
         dest = []
@@ -29,24 +30,24 @@ class Pedone(Pezzo):
         if giocatore.upper() == "WHITE":
             # 1) 
             uno_avanti = (csrc[0]+1,csrc[1])     #ovvero una riga più in su
-            if casella_valida(uno_avanti) and casella_vuota(scacchiera,uno_avanti):
+            if scacchiera.casella_valida(uno_avanti) and scacchiera.casella_vuota(uno_avanti):
                 dest.append(uno_avanti) 
             # 2)
             due_avanti = (csrc[0]+2,csrc[1])  
             caselle = [uno_avanti,due_avanti]
-            if pezzo.mai_mosso and  caselle_valide(caselle) and caselle_vuote(scacchiera,caselle):
+            if pezzo.mai_mosso and  scacchiera.caselle_valide(caselle) and scacchiera.caselle_vuote(caselle):
                 dest.append(due_avanti)
 
             # 3)    La casella deve essere occupata da avversario
             diag_sx =  (csrc[0]+1,csrc[1]-1) 
-            if casella_valida(diag_sx) and not casella_vuota(scacchiera,diag_sx):
-                piece = scacchiera[diag_sx[0]][diag_sx[1]]
+            if scacchiera.casella_valida(diag_sx) and not scacchiera.casella_vuota(diag_sx):
+                piece = scacchiera.get_pezzo(diag_sx)
                 if piece.colore.upper() == "BLACK":
                     dest.append(diag_sx) 
 
             diag_dx =   (csrc[0]+1,csrc[1]+1)
-            if casella_valida(diag_dx) and not casella_vuota(scacchiera,diag_dx):
-                piece = scacchiera[diag_dx[0]][diag_dx[1]]
+            if scacchiera.casella_valida(diag_dx) and not scacchiera.casella_vuota(diag_dx):
+                piece = scacchiera.get_pezzo(diag_dx)
                 if piece.colore.upper() == "BLACK":
                     dest.append(diag_dx) 
 
@@ -56,24 +57,24 @@ class Pedone(Pezzo):
         if giocatore.upper() == "BLACK":
             # 1) 
             uno_avanti = (csrc[0]-1,csrc[1])     #ovvero una riga più in giù
-            if casella_valida(uno_avanti) and casella_vuota(scacchiera,uno_avanti):
+            if scacchiera.casella_valida(uno_avanti) and scacchiera.casella_vuota(uno_avanti):
                 dest.append(uno_avanti) 
             # 2)
             due_avanti = (csrc[0]-2,csrc[1])  
             caselle = [uno_avanti,due_avanti]
-            if pezzo.mai_mosso and  caselle_valide(caselle) and caselle_vuote(scacchiera,caselle):
+            if pezzo.mai_mosso and  scacchiera.caselle_valide(caselle) and scacchiera.caselle_vuote(caselle):
                 dest.append(due_avanti)
 
             # 3)    La casella deve essere occupata da avversario       (diag sx dalla prospettiva del bianco)[ma è uguale tanto dopo fai l'altra]
             diag_sx =  (csrc[0]-1,csrc[1]+1) 
-            if casella_valida(diag_sx) and not casella_vuota(scacchiera,diag_sx):
-                piece = scacchiera[diag_sx[0]][diag_sx[1]]
+            if scacchiera.casella_valida(diag_sx) and not scacchiera.casella_vuota(diag_sx):
+                piece = scacchiera.get_pezzo(diag_sx)
                 if piece.colore.upper() == "WHITE":
                     dest.append(diag_sx) 
 
             diag_dx =   (csrc[0]-1,csrc[1]-1)
-            if casella_valida(diag_dx) and not casella_vuota(scacchiera,diag_dx):
-                piece = scacchiera[diag_dx[0]][diag_dx[1]]
+            if scacchiera.casella_valida(diag_dx) and not scacchiera.casella_vuota(diag_dx):
+                piece = scacchiera.get_pezzo(diag_dx)
                 if piece.colore.upper() == "WHITE":
                     dest.append(diag_dx) 
     
@@ -81,7 +82,9 @@ class Pedone(Pezzo):
     
     #Il pedone controlla le due case diagonali
     def case_controllate(self, scacchiera, csrc, giocatore):
-        pezzo = scacchiera[csrc[0]][csrc[1]]
+
+        pos = (csrc[0],csrc[1])
+        pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Pawn":
             raise TypeError("[Internal error] Non è presente un pedone nella casella!")
         pos_controllate = []
@@ -93,9 +96,9 @@ class Pedone(Pezzo):
             diag_sx = (csrc[0]-1,csrc[1]+1) 
             diag_dx = (csrc[0]-1,csrc[1]-1)
 
-        if casella_valida(diag_dx):
+        if scacchiera.casella_valida(diag_dx):
             pos_controllate.append(diag_sx)
-        if casella_valida(diag_dx):
+        if scacchiera.casella_valida(diag_dx):
             pos_controllate.append(diag_dx)
 
         return pos_controllate

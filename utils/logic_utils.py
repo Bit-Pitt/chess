@@ -19,6 +19,7 @@ def valore_pezzo(pezzo):
         return 9
     raise Exception("Nome del pezzo non riconosciuto [fun:valore_pezzo]")
 
+
 #controlla che il pezzo sia del giocatore
 def controlla_giocatore(giocatore,pezzo):
     if giocatore.upper() != pezzo.my_name().upper():
@@ -27,32 +28,6 @@ def controlla_giocatore(giocatore,pezzo):
         return True
     
 
-def casella_vuota(scacchiera,pos):
-    if scacchiera[pos[0]][pos[1]] == "empty":
-        return True
-    else:
-        return False
-
-    
-# true se tutte le caselle  [(i,j),(i,j)...] vuote   
-def caselle_vuote(scacchiera,caselle):
-    for pos in caselle:
-        if not casella_vuota(scacchiera,pos):
-            return False
-    return True
-
-#valida se (i,j) sia i che j compresi tra 0 e 7
-def casella_valida(pos):
-    if pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[0] <= 7:
-        return True
-    else:
-        return False
-    
-def caselle_valide(caselle):
-    for pos in caselle:
-        if not casella_valida(pos):
-            return False
-    return True
 
 '''     Regole da seguire       
 --> funzione da usare "caselle controllate" da nemico [!= da destinations anche se simile] 
@@ -133,10 +108,10 @@ def movimento_verticale(scacchiera,csrc,giocatore,avanti,destinazioni=False,case
     #mi muovo e mi fermo se incontro un pezzo 
     for k in range(l,r,passo):
         pos = (k,j)
-        if casella_vuota(scacchiera,pos):
+        if scacchiera.casella_vuota(pos):
             dest.append(pos)
         else:
-            pezzo = scacchiera[k][j]
+            pezzo = scacchiera.get_pezzo((k,j))
             if case_controllate:            #se voglio case controllate dal pezzo aggiungo a prescindere
                 dest.append(pos)
             if destinazioni  and pezzo_nemico(pezzo,giocatore):             #se voglio le destinazioni del pezzo solo se il pezzo è nemico
@@ -153,21 +128,21 @@ def movimento_orizzontale(scacchiera,csrc,giocatore,destra,destinazioni=False,ca
     j = csrc[1]  
 
     if destra == True:          #se dx mi muovo da (i,j) del pezzo in (i,j+1..8)
-        l = i+1 
+        l = j+1 
         r = 8    
         passo = 1 
     else:                       #indietro   (i,j) --> (i,j-1..0)
-        l = i-1
+        l = j-1
         r = -1 
         passo = -1 
 
     #mi muovo e mi fermo se incontro un pezzo, se nemico aggiungo la pos
     for k in range(l,r,passo):
         pos = (i,k)
-        if casella_vuota(scacchiera,pos):
+        if scacchiera.casella_vuota(pos):
             dest.append(pos)
         else:
-            pezzo = scacchiera[i][k]
+            pezzo = scacchiera.get_pezzo((i,k))
             if case_controllate:            #se voglio case controllate dal pezzo aggiungo a prescindere
                 dest.append(pos)
             if destinazioni  and pezzo_nemico(pezzo,giocatore):             #se voglio le destinazioni del pezzo solo se il pezzo è nemico

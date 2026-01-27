@@ -3,15 +3,7 @@ from pezzi.torre import Torre
 from partite_debug import partite
 from utils.graphic_utils import *
 from utils.logic_utils import *
-
-#Crea scacchiera vuota   (lista di liste "matrice")
-def crea_scacchiera():
-    grid = []
-    for i in range(8):
-        grid.append(list())
-        for _ in range(8):
-            grid[i].append("empty") 
-    return grid
+from scacchiera.chessboard import Scacchiera
 
 
 
@@ -21,7 +13,8 @@ def crea_scacchiera():
 # @param scacchiera , nome pezzo, casella src, casella dest , pezzi_persi 
 # @return se la mossa è valida
 def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
-    piece = scacchiera[csrc[0]][csrc[1]]
+    pos = (csrc[0],csrc[1])
+    piece = scacchiera.get_pezzo(pos)
     if not controlla_nome(piece,nome) or controlla_giocatore(giocatore,piece):
         return False
     
@@ -41,7 +34,7 @@ def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
 
 # Funzione un po troppo grossa
 def start_game(scacchiera,modalita="due giocatori"):
-    modalita="DEBUG"
+    #modalita="DEBUG"
     partita_debug = partite["1"]
 
     g1= "White"         #giocatori  
@@ -85,7 +78,7 @@ def start_game(scacchiera,modalita="due giocatori"):
         #cambio turno
         g_di_turno = g2 if g_di_turno == g1 else g1
 
-        print_scacchiera(scacchiera)
+        scacchiera.print()
         #print_pezzi_persi(pezzi_persi_w,"White")
         #print_pezzi_persi(pezzi_persi_b,"Black")
         print(vantaggio(scacchiera))
@@ -96,21 +89,20 @@ if __name__ == "__main__":
     print("Avvio partita")
 
     #Creazione schacchiera e pezzi
-    scacchiera = crea_scacchiera()
+    scacchiera = Scacchiera()
 
     # es pedoni biani --> 2°riga in tutte le col quindi  [1,*]
     for i in range(8):
         pw = Pedone("white")
         pb = Pedone("black")
-        scacchiera[1][i] = pw 
-        scacchiera[6][i] = pb
-
-    scacchiera[0][0] = Torre("white")
-    scacchiera[0][7] = Torre("white")
-    scacchiera[7][0] = Torre("black")
-    scacchiera[7][7] = Torre("black")
-
-
-    print_scacchiera(scacchiera)
+        scacchiera.aggiungi_pezzo(pw,(1,i))
+        scacchiera.aggiungi_pezzo(pb,(6,i))
+ 
+    scacchiera.aggiungi_pezzo(Torre("white"),(0,0))
+    scacchiera.aggiungi_pezzo(Torre("white"),(0,7))
+    scacchiera.aggiungi_pezzo(Torre("black"),(7,0))
+    scacchiera.aggiungi_pezzo(Torre("black"),(7,7))
+   
+    scacchiera.print()
 
     start_game(scacchiera)

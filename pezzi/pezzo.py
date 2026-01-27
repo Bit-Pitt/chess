@@ -12,11 +12,15 @@ class Pezzo:
     # Svuoto la casella di partenza
     def sposta(self,scacchiera,csrc,cdest):
         pezzo_catturato = "empty"
-        scacchiera[csrc[0]][csrc[1]] = "empty"
-        if not casella_vuota(scacchiera,cdest):
+        
+        pos_s = (csrc[0],csrc[1])
+        scacchiera.set_pezzo("empty",pos_s)
+        posD = (cdest[0],cdest[1])
+        if not scacchiera.casella_vuota(cdest):
             print("Catturato un pezzo!")
-            pezzo_catturato =  scacchiera[cdest[0]][cdest[1]]
-        scacchiera[cdest[0]][cdest[1]] = self 
+            pezzo_catturato =  scacchiera.get_pezzo(posD)
+
+        scacchiera.set_pezzo(self,posD)
         return pezzo_catturato
 
     #   @return tutte le caselle che il pezzo può raggiungere da quella posizione

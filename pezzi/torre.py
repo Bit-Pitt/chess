@@ -16,7 +16,8 @@ class Torre(Pezzo):
     # - 1) si muove a  "+"  [destinazioni si blocca se incontra un pezzo nemico / amico e sono casi diversi]
     # @return tutte le destinazioni possibili (i,j)
     def destinations(self, scacchiera, csrc, giocatore):
-        pezzo = scacchiera[csrc[0]][csrc[1]]
+        pos = (csrc[0],csrc[1])
+        pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Rook":
             raise TypeError("[Internal error] Non è presente un pedone nella casella!")
         dest = []
@@ -30,7 +31,8 @@ class Torre(Pezzo):
     
 
     def case_controllate(self, scacchiera, csrc, giocatore):
-        pezzo = scacchiera[csrc[0]][csrc[1]]
+        pos = (csrc[0],csrc[1])
+        pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Rook":
             raise TypeError("[Internal error] Non è presente un pedone nella casella!")
         pos_controllate = []

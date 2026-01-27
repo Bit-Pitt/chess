@@ -7,7 +7,23 @@ Estensioni:
 - aggiungi variazioni del gioco! (nouvi pezzi / mini-scacchiere / "carte magiche"... )
 
 
-*** considerazioni post
-- sarebbe stata meglio una classe "scacchiera" e molte funzioni sarebbero stati metodi della classe
+
+
+STRUTTURA E MODULARIZZAZIONE
+
+Classi:
+- pezzi:        [regola il comportamento specifico del pezzo]
+    - pedone
+    - torre
+    - .... 
+
+- scacchiera, riguarda un determinato tipo di scacchiera (standard:la classica)
+
+- utils:
+    - funzioni per il funzionamento del gioco, o logica in generale non strettamente correlata ad un pezzo o la scacchiera [potrebbero implementare una interfaccia]
+
+- main:  
+    - funzioni di struttura generale del flow della partita
+
 
 
