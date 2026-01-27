@@ -1,6 +1,8 @@
 from utils.logic_utils import *
 from .pezzo import Pezzo
 
+DEBUG = True
+
 class Torre(Pezzo):
     def __init__(self,colore):
         super().__init__(colore)
@@ -19,17 +21,19 @@ class Torre(Pezzo):
         pos = (csrc[0],csrc[1])
         pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Rook":
-            raise TypeError("[Internal error] Non è presente un pedone nella casella!")
+            raise TypeError("[Internal error] Non è presente una torre nella casella!")
         dest = []
 
         dest += movimento_verticale(scacchiera,csrc,giocatore,avanti = True,destinazioni=True)      #avanti sempre rispetto alla prospettiva del white!
         dest += movimento_verticale(scacchiera,csrc,giocatore,avanti = False,destinazioni=True)
         dest += movimento_orizzontale(scacchiera,csrc,giocatore,destra = True,destinazioni=True)
         dest += movimento_orizzontale(scacchiera,csrc,giocatore,destra = False,destinazioni=True)
-        print(f"Debug, possibili destinazioni da torre: {dest}")
+
+        if DEBUG:
+            DEBUG_print_caselle(dest,"possibili destinazioni da torre")
+        
         return dest
     
-
     def case_controllate(self, scacchiera, csrc, giocatore):
         pos = (csrc[0],csrc[1])
         pezzo = scacchiera.get_pezzo(pos)
@@ -41,11 +45,13 @@ class Torre(Pezzo):
         pos_controllate += movimento_verticale(scacchiera,csrc,giocatore,avanti = False,case_controllate=True)
         pos_controllate+= movimento_orizzontale(scacchiera,csrc,giocatore,destra = True,case_controllate=True)
         pos_controllate += movimento_orizzontale(scacchiera,csrc,giocatore,destra = False,case_controllate=True)
-        print(f"Debug, case controllate dalla torre: {pos_controllate}")
+
+        if DEBUG:
+            DEBUG_print_caselle(pos_controllate,"case controllate da torre")
         return pos_controllate
     
     def my_name(self):
-        return "Rook"
+        return self.nome
     
     def print_my_name(self):
         c = self.colore[0]

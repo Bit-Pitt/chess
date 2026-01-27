@@ -14,13 +14,13 @@ class Pezzo:
         pezzo_catturato = "empty"
         
         pos_s = (csrc[0],csrc[1])
-        scacchiera.set_pezzo("empty",pos_s)
+        scacchiera.aggiungi_pezzo("empty",pos_s)
         posD = (cdest[0],cdest[1])
         if not scacchiera.casella_vuota(cdest):
             print("Catturato un pezzo!")
             pezzo_catturato =  scacchiera.get_pezzo(posD)
 
-        scacchiera.set_pezzo(self,posD)
+        scacchiera.aggiungi_pezzo(self,posD)
         return pezzo_catturato
 
     #   @return tutte le caselle che il pezzo può raggiungere da quella posizione

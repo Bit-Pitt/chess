@@ -1,5 +1,6 @@
 from pezzi.pedone import Pedone
 from pezzi.torre import Torre
+from pezzi.re import Re
 from partite_debug import partite
 from utils.graphic_utils import *
 from utils.logic_utils import *
@@ -34,7 +35,7 @@ def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
 
 # Funzione un po troppo grossa
 def start_game(scacchiera,modalita="due giocatori"):
-    #modalita="DEBUG"
+    modalita="DEBUG"
     partita_debug = partite["1"]
 
     g1= "White"         #giocatori  
@@ -102,6 +103,9 @@ if __name__ == "__main__":
     scacchiera.aggiungi_pezzo(Torre("white"),(0,7))
     scacchiera.aggiungi_pezzo(Torre("black"),(7,0))
     scacchiera.aggiungi_pezzo(Torre("black"),(7,7))
+
+    scacchiera.aggiungi_pezzo(Re("white"),(0,4))
+    scacchiera.aggiungi_pezzo(Re("black"),(7,4))
    
     scacchiera.print()
 

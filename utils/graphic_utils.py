@@ -38,6 +38,24 @@ def stringTOpos(string):
     row = int(string[1])-1
     return (row,col)
 
+# "[4][1] --> B5"
+def posTOstring(pos):
+    if len(pos) != 2:
+        raise TypeError("Posizione da convertire non valida")
+    
+    row, col = pos
+    if row < 0 or col < 0:
+        raise ValueError("Indici non validi")
+    
+    lettera = chr(col + ord('A'))
+    numero = str(row + 1)
+    
+    return lettera + numero
+
+    
+    
+
+
 
 
 # Es  "P" --> "Pawn"

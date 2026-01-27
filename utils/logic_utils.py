@@ -26,7 +26,13 @@ def controlla_giocatore(giocatore,pezzo):
         return False
     else:
         return True
-    
+
+# Se io sono "WHITE" --> avversario "BLACK"
+def nome_avversario(giocatore):
+    if giocatore.upper() == "WHITE":
+        return "BLACK"
+    else:
+        return "WHITE"
 
 
 '''     Regole da seguire       
@@ -91,7 +97,7 @@ def pezzo_nemico(pezzo,giocatore):
 
 def movimento_verticale(scacchiera,csrc,giocatore,avanti,destinazioni=False,case_controllate=False):
     if destinazioni  and case_controllate:
-        raise Exception("Internal errore in movimento_verticale")
+        raise Exception("API chiamata incorrettamente")
     dest = []
     i = csrc[0]         #pos (i,j) del pezzo
     j = csrc[1]  
@@ -122,7 +128,7 @@ def movimento_verticale(scacchiera,csrc,giocatore,avanti,destinazioni=False,case
 # Analogo di "destinazioni_verticali"
 def movimento_orizzontale(scacchiera,csrc,giocatore,destra,destinazioni=False,case_controllate=False):
     if destinazioni  and case_controllate:
-        raise Exception("Internal errore in movimento_orizzontale")
+        raise Exception("API chiamata incorrettamente")
     dest = []
     i = csrc[0]         #pos (i,j) del pezzo
     j = csrc[1]  
@@ -149,3 +155,48 @@ def movimento_orizzontale(scacchiera,csrc,giocatore,destra,destinazioni=False,ca
                 dest.append(pos)
             break 
     return dest
+
+
+# Se destination = True
+# @return  tutte le casella valide e vuote seguendo il movimento del re (una casella ogni direzione)
+# Se case_controllate = True --> le caselle non devono essere vuote
+def movimento_re(scacchiera,csrc,destinazioni=False,case_controllate=False):
+    if destinazioni  and case_controllate:
+        raise Exception("API chiamata incorrettamente")
+    #al più 8
+    dest = []
+    pos_avanti = (csrc[0]+1,csrc[1])                # POV bianco, ma è uguale, così per leggibilità
+    pos_indietro = (csrc[0]-1,csrc[1])
+    pos_dx = (csrc[0],csrc[1]+1)
+    pos_sx = (csrc[0],csrc[1]-1)
+    diag_avanti_sx = (csrc[0]+1,csrc[1]-1)
+    diag_avanti_dx = (csrc[0]+1,csrc[1]+1)
+    diag_indietro_sx = (csrc[0]-1,csrc[1]-1)
+    diag_indietro_dx = (csrc[0]-1,csrc[1]+1)
+
+    dest.extend([pos_avanti,pos_indietro,pos_dx,pos_sx,diag_avanti_dx,diag_avanti_sx,diag_indietro_dx,diag_indietro_sx])
+
+    #filtra se valida 
+    dest = [ pos for pos in dest if scacchiera.casella_valida(pos)   ]
+
+    if destinazioni:    #se guardiamo le destinazioni allora devono essere vuote
+        dest = [ pos for pos in dest if scacchiera.casella_vuota(pos)   ]
+        
+    return dest
+
+def DEBUG_print_caselle(positions,str=""):
+    print("[DEBUG] caselle stampate," + str)
+    for pos in positions:
+        print(posTOstring(pos),end=" ")
+    print()
+
+
+# @return TUTTE le case controllate dal giocatore
+def case_controllate_da_giocatore(scacchiera,giocatore):
+    case = set()
+    for i in range(8):
+        for j in range(8):
+            pezzo = scacchiera.get_pezzo((i,j))
+            if pezzo != "empty" and pezzo.colore.upper() == giocatore.upper():
+                case.update(pezzo.case_controllate(scacchiera,(i,j),giocatore)) 
+    return list(case)

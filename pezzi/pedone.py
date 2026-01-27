@@ -46,6 +46,10 @@ class Pedone(Pezzo):
                     dest.append(diag_sx) 
 
             diag_dx =   (csrc[0]+1,csrc[1]+1)
+
+            if scacchiera.casella_valida(diag_dx):
+                print(f"[DEBUG] Valida: {diag_dx}")
+                
             if scacchiera.casella_valida(diag_dx) and not scacchiera.casella_vuota(diag_dx):
                 piece = scacchiera.get_pezzo(diag_dx)
                 if piece.colore.upper() == "BLACK":
