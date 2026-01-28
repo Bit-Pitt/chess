@@ -19,7 +19,7 @@ def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
     if not controlla_nome(piece,nome) or controlla_giocatore(giocatore,piece):
         return False
     
-    
+    # Qui avverranno tutti i controlli (scacco ... )
     possibili_dest = get_possible_destination(scacchiera,piece,csrc,giocatore)
     #if possibili_dest == "end-game":
         
@@ -36,7 +36,7 @@ def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
 # Funzione un po troppo grossa
 def start_game(scacchiera,modalita="due giocatori"):
     modalita="DEBUG"
-    partita_debug = partite["1"]
+    partita_debug = partite["attiva_in_debug"]
 
     g1= "White"         #giocatori  
     g2 = "Black"
@@ -56,7 +56,7 @@ def start_game(scacchiera,modalita="due giocatori"):
             
             if modalita == "due giocatori" or len(partita_debug) == 0:
                 mossa = input("Immetti mossa: (es pedone da A2 a A3 -->  P A2 A3):  ")
-
+                print("- per arrocco:  K [src] [dest]")
             if modalita == "DEBUG" and len(partita_debug) > 0:
                 mossa = partita_debug[0]
                 partita_debug.pop(0)

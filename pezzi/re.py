@@ -17,6 +17,7 @@ class Re(Pezzo):
     # Possibili destinazioni re:
     # - 1) tutte le direzioni ma una casella di passo
     # - 2) Non devono essere controllate da altri pezzi nemici!
+    # - 3) arrocco   
     # @return tutte le destinazioni possibili (i,j)
     def destinations(self, scacchiera, csrc, giocatore):
         pos = (csrc[0],csrc[1])
@@ -32,6 +33,10 @@ class Re(Pezzo):
         controllate_da_avversario = case_controllate_da_giocatore(scacchiera,avversario)
 
         dest = [ pos for pos in dest if pos not in controllate_da_avversario]
+
+        #3)   [ottieni le due torri (se mai mosse sono li)]
+        mosse_speciali = self.arrocco(scacchiera,csrc,giocatore,controllate_da_avversario)
+
 
         if DEBUG:
             DEBUG_print_caselle(dest,"destinazioni possibili del re:")
@@ -63,3 +68,10 @@ class Re(Pezzo):
     #se ha la variabile "mai_mosso"
     def has_mai_mosso(self):
         return True
+    
+    #Ritorna la destinazione per il re (i,j) se può arroccare   [es arrocco corto bianco ritorna --> g1]    
+    def arrocco(self,scacchiera,csrc,giocatore,controllate_da_avversario):
+        #controlla  i due arrocchi per nero e bianco se re mai mosso, torre mai mossa, se case dove si muove il re NON controllate da nemico
+
+        #if not self.mai_mosso
+        return 

@@ -186,6 +186,8 @@ def movimento_re(scacchiera,csrc,destinazioni=False,case_controllate=False):
 
 def DEBUG_print_caselle(positions,str=""):
     print("[DEBUG] caselle stampate," + str)
+    if len(positions) == 0:
+        print(0)
     for pos in positions:
         print(posTOstring(pos),end=" ")
     print()
