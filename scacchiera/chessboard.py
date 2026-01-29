@@ -86,4 +86,12 @@ class Scacchiera:
                 return False
         return True
     
+    # @return pos (i,j) del re di quel giocatore
+    def get_pos_re(self,giocatore):
+        for i in range(8):
+            for j in range(8):
+                pezzo = self.get_pezzo((i,j))
+                if pezzo != "empty" and pezzo.my_name() == "King" and pezzo.colore.upper() == giocatore.upper():
+                    return (i,j)
+        raise Exception("Re non trovato ?!")
       

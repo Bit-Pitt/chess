@@ -1,7 +1,7 @@
 from utils.logic_utils import *
 from .pezzo import Pezzo
 
-DEBUG = True
+DEBUG = False
 
 class Torre(Pezzo):
     def __init__(self,colore):
@@ -38,7 +38,7 @@ class Torre(Pezzo):
         pos = (csrc[0],csrc[1])
         pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Rook":
-            raise TypeError("[Internal error] Non è presente un pedone nella casella!")
+            raise TypeError("[Internal error] Non è presente una torre nella casella!")
         pos_controllate = []
 
         pos_controllate += movimento_verticale(scacchiera,csrc,giocatore,avanti = True,case_controllate=True)

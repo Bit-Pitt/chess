@@ -95,3 +95,15 @@ def controlla_nome(piece,nome):
         return True
     else:
         return False
+    
+#controllo che il formato di input sia "nome" "csrc" "cdest" in particolare:
+# csrc e cdest siano una lettera dell'alfabeto a-z o A-Z e una cifra
+def controlla_input(mossa):
+    csrc = mossa[1]
+    cdest = mossa[2]
+    if csrc[0].lower() < 'a' or csrc[0].lower() > 'z' or not csrc[1].isdigit():
+        return False
+    if cdest[0].lower() < 'a' or cdest[0].lower() > 'z' or not cdest[1].isdigit():
+        return False
+    return True
+    

@@ -12,7 +12,7 @@ from scacchiera.chessboard import Scacchiera
 # MOSSA VALIDA se la dest è una possibile destinazione
 # @input (es nome=P csrc=(1,0) cdest=(2,0))  {primo pedone A2 to A3}
 # @param scacchiera , nome pezzo, casella src, casella dest , pezzi_persi 
-# @return se la mossa è valida
+# COSA FA: controlla se la mossa è valida e in tal caso la effettua             
 def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
     pos = (csrc[0],csrc[1])
     piece = scacchiera.get_pezzo(pos)
@@ -21,9 +21,22 @@ def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
     
     # Qui avverranno tutti i controlli (scacco ... )
     possibili_dest = get_possible_destination(scacchiera,piece,csrc,giocatore)
-    #if possibili_dest == "end-game":
-        
 
+    # La funzione restituisce:
+    # - CASO GENERALE: lista di coppie (i,j) ovvero la posizione di destinazione del pezzo
+    # - CASI SPECIALI:
+    #       - "(i,j,"arrocco")", in tal caso si fa un controllo preventivo
+    # Quindi prima controllo i casi particolari come arrocco / fine partita, altrimenti il caso generico in fondo
+
+    
+    #gestisco mosse speciali
+    mosse_arrocco = trova_special_move(possibili_dest,"Arrocco")        #hai desso sai le (i,j) che sono in realtà degli arrocchi
+
+    if cdest in mosse_arrocco:
+        effettua_arrocco(scacchiera,cdest)
+        return True
+
+    # caso generico:  se la destinazione scelta dall'user "cdest" è nelle destinazioni del pezzo allora esegui (già fatti tutti i controlli necessari)
     if cdest in possibili_dest:
         pezzo_perso = piece.sposta(scacchiera,csrc,cdest)
         if pezzo_perso != "empty":
@@ -46,8 +59,21 @@ def start_game(scacchiera,modalita="due giocatori"):
     #ciclo di gioco
     while (True):
         print(g_di_turno+" turn")
-    
+        g_NON_di_turno = g2 if g_di_turno == g1 else g1
         pezzi_persi = pezzi_persi_b if g_di_turno == g1 else pezzi_persi_w      #es se turno del White allora può perderli il black
+
+        #Controlla se partita finita
+        res = partita_finita(scacchiera,g_di_turno)
+        if res == 1:
+            print("\n\n\n")
+            print(f"Game ended for stalemate")
+            print("\n\n\n")
+            break
+        elif res == 2:
+            print("\n\n\n")
+            print(f"Game ended, winner: {g_NON_di_turno}")
+            print("\n\n\n")
+            break
 
         #prova mossa
         valid_move = False
@@ -65,7 +91,7 @@ def start_game(scacchiera,modalita="due giocatori"):
             
             
             mossa = mossa.split()
-            if len(mossa) != 3:
+            if len(mossa) != 3 or not controlla_input(mossa):
                 valid_move = False
             else:
                 nome= traduci_nome(mossa[0])
@@ -73,6 +99,7 @@ def start_game(scacchiera,modalita="due giocatori"):
                 cdest = stringTOpos(mossa[2])             
                 valid_move = muovi(scacchiera, nome, csrc, cdest, g_di_turno,pezzi_persi)
             
+
             if not valid_move:
                 print("Mossa non valida,  mossa effettuata:"+str(mossa))
 
@@ -110,3 +137,4 @@ if __name__ == "__main__":
     scacchiera.print()
 
     start_game(scacchiera)
+    print("Grazie per aver giocato")
