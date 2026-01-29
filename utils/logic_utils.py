@@ -34,24 +34,24 @@ def nome_avversario(giocatore):
     else:
         return "WHITE"
     
-#Il giocatore è sotto doppio scacco se 2 pezzi nemici hanno come "case controllate" quella del mio re
-# nota --> questo implicitamente implica che lo scacco avvenga da due direzioni e quindi il re si deve muovere
-def doppio_scacco(scacchiera,giocatore):
+
+# @return  [ num_scacchi , pos1, pos2 .. ==> pos dei pezzi che danno scacco al giocatore "giocatore"]
+def info_scacchi(scacchiera,giocatore):
+    res = []
     avversario  = nome_avversario(giocatore)
     count_scacchi = 0
     pos_re = scacchiera.get_pos_re(giocatore)              #ottengo pos del mio re
-    #controllo le caselle controllate da tutti i pezzi nemici e vedo se mi danno più di uno scacco
+    #controllo le caselle controllate da tutti i pezzi nemici, controllo se mi danno scacco
     for i in range(8):
         for j in range(8):
             pezzo = scacchiera.get_pezzo((i,j))
             if pezzo != "empty" and pezzo.colore.upper() == avversario:
                 case = pezzo.case_controllate(scacchiera,(i,j), giocatore=avversario)
                 if pos_re in case:
+                    res.append((i,j))       #questo pezzo mi da scacco
                     count_scacchi += 1
-    if count_scacchi > 1:
-        return True
-    else:
-        return False
+    res.insert(0,count_scacchi)
+    return res
 
 # @ return 0 Se non finita
 # @ return 1 Se stallo
@@ -60,7 +60,9 @@ def doppio_scacco(scacchiera,giocatore):
 #   - 2.2 scacco e re non può muoversi / non si può interporre pezzo / catturare pezzo che da scacco
 def partita_finita(scacchiera,giocatore):
     # 2.1
-    if doppio_scacco(scacchiera,giocatore):
+    info = info_scacchi(scacchiera,giocatore)
+    num_scacchi = info[0]
+    if num_scacchi >= 2 :
         pos_re = scacchiera.get_pos_re(giocatore)
         re = scacchiera.get_pezzo(pos_re)
         d = re.destinations(scacchiera,pos_re,giocatore)
@@ -89,7 +91,9 @@ def partita_finita(scacchiera,giocatore):
 '''
 def get_possible_destination(scacchiera,piece,csrc,giocatore):
     #controlla se doppio-scacco in tal caso solo il re può muoversi 
-    if doppio_scacco(scacchiera,giocatore):
+    info = info_scacchi(scacchiera,giocatore)
+    num_scacchi = info[0]
+    if num_scacchi >= 2 :
         pos_re = scacchiera.get_pos_re(giocatore)
         re = scacchiera.get_pezzo(pos_re)
         destinations = re.destinations(scacchiera,pos_re,giocatore)
@@ -109,20 +113,7 @@ def get_possible_destination(scacchiera,piece,csrc,giocatore):
     destinations = piece.destinations(scacchiera,csrc,giocatore)
     return destinations
 
-# @return tutte le caselle (i,j) seguendo il movimento della torre [scacchiera vuota]
-def movimento_torre(csrc):
-    i = csrc[0]
-    j = csrc[1]
-    pos_verticali = []
-    for k in range(8):
-        if k != i:                  #non voglio mettere la posizione dove si trova il pezzo
-            pos_verticali.append((k,j))
-    pos_orizzontali = []
-    for k in range(8):
-        if k != j:                  #non voglio mettere la posizione dove si trova il pezzo
-            pos_orizzontali.append((i,k))
 
-    return pos_orizzontali+pos_verticali
 
 
 # @return Es giocatore = "White" se pezzo è del black --> True
@@ -206,7 +197,7 @@ def movimento_orizzontale(scacchiera,csrc,giocatore,destra,destinazioni=False,ca
 
 # Se destination = True
 # @return  tutte le casella valide e vuote seguendo il movimento del re (una casella ogni direzione)
-# Se case_controllate = True --> le caselle non devono essere vuote
+# Se case_controllate = True --> il filtro non viene applicato 
 def movimento_re(scacchiera,csrc,destinazioni=False,case_controllate=False):
     if destinazioni  and case_controllate:
         raise Exception("API chiamata incorrettamente")
@@ -230,6 +221,27 @@ def movimento_re(scacchiera,csrc,destinazioni=False,case_controllate=False):
         dest = [ pos for pos in dest if scacchiera.casella_vuota(pos)   ]
         
     return dest
+
+# es se direzione= avanti_sx allora lo step_i = +1, step_j = -1  [provoca movimento diag a sinistra]
+def calcola_step(direzione):
+    if direzione == "avanti_sx":
+        return [+1,-1]
+    elif direzione == "avanti_dx":
+        return [+1,+1]
+    if direzione == "indietro_sx":
+        return [-1,-1]
+    if direzione == "indietro_dx":
+        return [-1,+1]
+
+# @input: direzione (es avanti_sx) e destinazioni=True o case_controllate=True
+# return: le possibili destinazioni / case controllate dalla casella csrc in quella diagonale (avanti_sx / avanti_dx / indietro_sx / indietro_dx)
+def movimento_diagonale(scacchiera,csrc,giocatore,direzione,destinazioni=False,case_controllate=False):
+    if destinazioni  and case_controllate:
+        raise Exception("API [movimento_diagonale] si aspetta o destinazioni=True o case_controllate=True")
+    step_i , step_j = calcola_step(direzione)
+    # [TODO]
+    return (0,0)
+
 
 def DEBUG_print_caselle(positions,str=""):
     print("[DEBUG] caselle stampate," + str)
