@@ -41,7 +41,8 @@ def stringTOpos(string):
 # "[4][1] --> B5"
 def posTOstring(pos):
     if len(pos) != 2:
-        raise TypeError("Posizione da convertire non valida")
+        error_string = f"Posizione da convertire non valida: {pos}"
+        raise Exception(error_string)
     
     row, col = pos
     if row < 0 or col < 0:

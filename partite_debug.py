@@ -13,28 +13,10 @@
 '''
 partite = {
     "attiva_in_debug":[
-            "P A2 A3", 
-            "P B7 B5",
-            "R A1 A2",
-            "P A7 A5",
-            "P B2 B4",
-            "P A5 B4",
-            "P A3 B4",
-            "R  A8 A6",
-            "K E1 D1",
-            "R A6 A2",
-            "P H2 H4",
-            "k e8 g8",
-            "P d2 d4 ",
-            "P e7 e5",
-            "P d4 e5",
-            "R f8 d8",
-            "P e5 e6",
-            "r a2 a1",
-            "r h1 h2",
-            "p d7 e6",  #doppio scacco end-game
-          
-        
+            "P D2 D4", 
+            "P D7 D5",
+            "b c1 h7",
+            
         ],
     "2":[
             "P A2 A3", 

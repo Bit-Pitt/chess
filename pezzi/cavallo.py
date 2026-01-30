@@ -1,7 +1,7 @@
 from utils.logic_utils import *
 from .pezzo import Pezzo
 
-DEBUG = True
+DEBUG = False
 
 class Cavallo(Pezzo):
     def __init__(self,colore):
@@ -22,9 +22,8 @@ class Cavallo(Pezzo):
         pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Knight":
             raise TypeError("[Internal error] Non è presente un cavallo nella casella!")
-        dest = []
 
-        # dest += movimento_cavallo ... 
+        dest = movimento_cavallo(scacchiera,csrc,giocatore,destinazioni=True)
 
         if DEBUG:
             DEBUG_print_caselle(dest,"possibili destinazioni del cavallo: ")
@@ -36,10 +35,8 @@ class Cavallo(Pezzo):
         pezzo = scacchiera.get_pezzo(pos)
         if pezzo.my_name() != "Knight":
             raise TypeError("[Internal error] Non è presente un cavallo nella casella!")
-        pos_controllate = []
 
-        # dest += movimento_cavallo .. 
-
+        pos_controllate = movimento_cavallo(scacchiera,csrc,giocatore,case_controllate=True)
 
         if DEBUG:
             DEBUG_print_caselle(pos_controllate,"case controllate da cavallo")

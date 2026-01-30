@@ -1,6 +1,9 @@
 from pezzi.pedone import Pedone
 from pezzi.torre import Torre
 from pezzi.re import Re
+from pezzi.alfiere import Alfiere
+from pezzi.cavallo import Cavallo
+from pezzi.regina import Regina
 from partite_debug import partite
 from utils.graphic_utils import *
 from utils.logic_utils import *
@@ -133,6 +136,20 @@ if __name__ == "__main__":
 
     scacchiera.aggiungi_pezzo(Re("white"),(0,4))
     scacchiera.aggiungi_pezzo(Re("black"),(7,4))
+
+    scacchiera.aggiungi_pezzo(Alfiere("white"),(0,2))
+    scacchiera.aggiungi_pezzo(Alfiere("white"),(0,5))
+    scacchiera.aggiungi_pezzo(Alfiere("black"),(7,2))
+    scacchiera.aggiungi_pezzo(Alfiere("black"),(7,5))
+
+    scacchiera.aggiungi_pezzo(Cavallo("white"),(0,1))
+    scacchiera.aggiungi_pezzo(Cavallo("white"),(0,6))
+    scacchiera.aggiungi_pezzo(Cavallo("black"),(7,1))
+    scacchiera.aggiungi_pezzo(Cavallo("black"),(7,6))
+
+    scacchiera.aggiungi_pezzo(Regina("white"),(0,3))
+    scacchiera.aggiungi_pezzo(Regina("black"),(7,3))
+
    
     scacchiera.print()
 

@@ -1,7 +1,7 @@
 from utils.logic_utils import *
 from .pezzo import Pezzo
 
-DEBUG = True
+DEBUG = False
 
 class Alfiere(Pezzo):
     def __init__(self,colore):
@@ -24,9 +24,11 @@ class Alfiere(Pezzo):
             raise TypeError("[Internal error] Non è presente un'alfiere nella casella!")
         dest = []
 
-        # Crea una UNICA fun: "movimento_diagonale" a cui passi per parametro direzione es "avanti_sx" e se destinazioni,case_controllate
-        # dest += movimento_diagonale(direzione)
-
+        dest += movimento_diagonale(scacchiera,csrc,giocatore,"avanti_sx",destinazioni=True)
+        dest += movimento_diagonale(scacchiera,csrc,giocatore,"avanti_dx",destinazioni=True)
+        dest += movimento_diagonale(scacchiera,csrc,giocatore,"indietro_sx",destinazioni=True)
+        dest += movimento_diagonale(scacchiera,csrc,giocatore,"indietro_dx",destinazioni=True)
+        
         if DEBUG:
             DEBUG_print_caselle(dest,"possibili destinazioni dell'alfiere: ")
         
@@ -39,11 +41,15 @@ class Alfiere(Pezzo):
             raise TypeError("[Internal error] Non è presente un'alfiere nella casella!")
         pos_controllate = []
 
-        # dest += movimento_diagonale ... 
+        pos_controllate += movimento_diagonale(scacchiera,csrc,giocatore,"avanti_sx",case_controllate=True)
+        pos_controllate += movimento_diagonale(scacchiera,csrc,giocatore,"avanti_dx",case_controllate=True)
+        pos_controllate += movimento_diagonale(scacchiera,csrc,giocatore,"indietro_sx",case_controllate=True)
+        pos_controllate += movimento_diagonale(scacchiera,csrc,giocatore,"indietro_dx",case_controllate=True)
 
 
         if DEBUG:
             DEBUG_print_caselle(pos_controllate,"case controllate dall'alfiere:")
+
         return pos_controllate
     
     def my_name(self):

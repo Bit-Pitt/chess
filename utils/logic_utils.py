@@ -189,7 +189,7 @@ def movimento_orizzontale(scacchiera,csrc,giocatore,destra,destinazioni=False,ca
             pezzo = scacchiera.get_pezzo((i,k))
             if case_controllate:            #se voglio case controllate dal pezzo aggiungo a prescindere
                 dest.append(pos)
-            if destinazioni  and pezzo_nemico(pezzo,giocatore):             #se voglio le destinazioni del pezzo solo se il pezzo è nemico
+            if destinazioni  and pezzo_nemico(pezzo,giocatore):             #se voglio le destinazioni del pezzo allora aggiungo solo se il pezzo è nemico
                 dest.append(pos)
             break 
     return dest
@@ -198,6 +198,7 @@ def movimento_orizzontale(scacchiera,csrc,giocatore,destra,destinazioni=False,ca
 # Se destination = True
 # @return  tutte le casella valide e vuote seguendo il movimento del re (una casella ogni direzione)
 # Se case_controllate = True --> il filtro non viene applicato 
+# NOTA: non viene effettuato il controllo speciale per il re (quello è compito del suo metodo così la funzione viene usata ad es anche per la regina)
 def movimento_re(scacchiera,csrc,destinazioni=False,case_controllate=False):
     if destinazioni  and case_controllate:
         raise Exception("API chiamata incorrettamente")
@@ -228,19 +229,70 @@ def calcola_step(direzione):
         return [+1,-1]
     elif direzione == "avanti_dx":
         return [+1,+1]
-    if direzione == "indietro_sx":
+    elif direzione == "indietro_sx":
         return [-1,-1]
-    if direzione == "indietro_dx":
+    elif direzione == "indietro_dx":
         return [-1,+1]
+    else:
+        raise Exception("Direzione non esistente")
 
 # @input: direzione (es avanti_sx) e destinazioni=True o case_controllate=True
 # return: le possibili destinazioni / case controllate dalla casella csrc in quella diagonale (avanti_sx / avanti_dx / indietro_sx / indietro_dx)
 def movimento_diagonale(scacchiera,csrc,giocatore,direzione,destinazioni=False,case_controllate=False):
+    dest = []
     if destinazioni  and case_controllate:
         raise Exception("API [movimento_diagonale] si aspetta o destinazioni=True o case_controllate=True")
     step_i , step_j = calcola_step(direzione)
-    # [TODO]
-    return (0,0)
+    start_pos = (csrc[0],csrc[1])
+    next_pos = (start_pos[0]+step_i, start_pos[1] + step_j)        #Calcolo la prossima pos in base alla direzione (i +/- 1 e j +/- 1)
+
+    while scacchiera.casella_valida(next_pos):      #Logica simile a "Movimento_orizzontale.." esco se casella non valida o incontrato pezzo
+
+        if scacchiera.casella_vuota(next_pos):
+            dest.append(next_pos)
+        else:
+            pezzo = scacchiera.get_pezzo(next_pos)
+            if case_controllate:            #se voglio case controllate dal pezzo aggiungo a prescindere
+                dest.append(next_pos)
+            if destinazioni  and pezzo_nemico(pezzo,giocatore):             #se voglio le destinazioni del pezzo allora aggiungo solo se il pezzo è nemico
+                dest.append(next_pos)
+            break   # 2° caso d'uscita
+        next_pos = (next_pos[0]+step_i, next_pos[1] + step_j)      
+
+    return dest
+
+
+# return: le possibili destinazioni / case controllate del cavallo
+def movimento_cavallo(scacchiera,csrc,giocatore,destinazioni=False,case_controllate=False):
+    dest = []
+    if destinazioni  and case_controllate:
+        raise Exception("API [movimento_diagonale] si aspetta o destinazioni=True o case_controllate=True")
+    start_pos = (csrc[0],csrc[1])
+    #Il cavallo ha 8 possibili posizioni, controlla solo se valida per "case_controllate" e se vuota o nemica per "destinazioni"
+    avanti_dx = (start_pos[0]+2 , start_pos[1]+1)               #fatto così per leggibilità
+    avanti_sx = (start_pos[0]+2 , start_pos[1]-1)
+    destra_dx = (start_pos[0]-1 , start_pos[1]+2)
+    destra_sx = (start_pos[0]+1 , start_pos[1]+2)
+    indietro_dx = (start_pos[0]-2 , start_pos[1]+1) 
+    indietro_sx = (start_pos[0]-2 , start_pos[1]-1) 
+    sinistra_dx = (start_pos[0]-1 , start_pos[1]-2) 
+    sinistra_sx = (start_pos[0]+1 , start_pos[1]-2) 
+    dest = [avanti_dx, avanti_sx, destra_dx, destra_sx, indietro_dx, indietro_sx, sinistra_dx, sinistra_sx]
+
+    dest = [ pos for pos in dest if scacchiera.casella_valida(pos)  ]           #primo filtro
+
+    if destinazioni:            #controllo se vuota o c'è un pezzo nemico
+        tmp = []
+        for pos in dest:
+            if scacchiera.casella_vuota(pos):
+                tmp.append(pos)
+            else:
+                pezzo = scacchiera.get_pezzo(pos)
+                if pezzo_nemico(pezzo,giocatore):
+                    tmp.append(pos)
+        dest = tmp
+
+    return dest
 
 
 def DEBUG_print_caselle(positions,str=""):
