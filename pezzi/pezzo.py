@@ -40,7 +40,7 @@ class Pezzo:
     
     #Se destinazioni del pezzo vanno filtrate se il pezzo è inchiodato, lo è se togliendo il pezzo aumenta di 1 gli scacchi che subisco [potrei già star ricevendone uno]
     # in tal caso riconosco quale sia lo scacco che nasce dal togliere questo pezzo, e io potrò muovere questo pezzo SOLO nelle case in linea tra 
-    # questo scacco e il pezzo inchiodato.  (questo è come funziona l'inchiodatura lungo uno scacco) {inchiodatura lunga 2+ direzioni impossibile}
+    # questo scacco e il pezzo inchiodato (o il pezzo stesso).  (questo è come funziona l'inchiodatura lungo uno scacco) {inchiodatura lunga 2+ direzioni impossibile}
     def filtro_inchiodatura(self,scacchiera,csrc,destinazioni):
         case_mantengono_inchiodatura = []           #se pinnato queste sono le case che non espongono il re
         # Controllo se pinnato 
@@ -61,6 +61,7 @@ class Pezzo:
                 case_in_mezzo = case_in_linea(pos_re,scacco)
                 if csrc in case_in_mezzo:                                   #allora questo è la linea dell'inchiodatura
                     case_mantengono_inchiodatura = case_in_mezzo
+                case_mantengono_inchiodatura.append(scacco)                     #sarebbe la cattura del pezzo che mi inchioda
 
             # finalmente adesso le destinazioni del pezzo sono le sue calcolate in precedenza da "destinations" ma che sono in linea con l'inchiodatura
             ds = set(destinazioni)

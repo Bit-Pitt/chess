@@ -13,14 +13,14 @@
 '''
 partite = {
     "attiva_in_debug":[
-            "P A2 A3", 
-            "R A8 A3",
-            "R h1 g1",
-            "r h8 h7",
-            "r a1 b1",
-            "r a3 a1",
-            "p b2 b4",
-            "r h7 h6",
+             "p a2 a3" ,
+                "p f7 f5" ,
+                "p e2 e3" ,
+                "p a7 a6" ,
+                "q d1 h5" ,
+                "p g7 g6" ,
+                "p a3 a4" ,
+                "p g6 h5"
         ],
     "2":[
             "P A2 A3", 

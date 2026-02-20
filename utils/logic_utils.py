@@ -64,12 +64,13 @@ def case_in_linea(pos_re,pos_scacco):
     pos = []
     #Orizzontale
     if pos_re[0] == pos_scacco[0]:
-        i = pos_re[0]
+        i = pos_re[0]                                                          
         left = min(pos_re[1],pos_scacco[1])
         right = max(pos_re[1],pos_scacco[1])
         for j in range(left+1,right):
             pos.append((i,j))
-
+        return pos
+    
     #Verticale
     if pos_re[1] == pos_scacco[1]:
         j = pos_re[1]
@@ -77,25 +78,27 @@ def case_in_linea(pos_re,pos_scacco):
         right = max(pos_re[0],pos_scacco[0])
         for i in range(left+1,right):
             pos.append((i,j))
+        return pos
 
-        #Diagonale    ["cammino" sulla diagonale da  "pos_re" --> "pos_scacco"]
-        if pos_re[0] < pos_scacco[0]:           #in questo caso andrà ++1 per i (devo salire la riga..)
-            dx = 1
-        else:
-            dx = -1 
-        if pos_re[1] < pos_scacco[1]:
-            dy = 1 
-        else:
-            dy = -1 
+    #se arrivo qui allora è per forza diagonale
+    #Diagonale   ["cammino" sulla diagonale da  "pos_re" --> "pos_scacco"]
+    if pos_re[0] < pos_scacco[0]:           #in questo caso andrà ++1 per i (devo salire la riga..)
+        dx = 1
+    else:
+        dx = -1 
+    if pos_re[1] < pos_scacco[1]:
+        dy = 1 
+    else:
+        dy = -1 
 
-        #Prima posizione da aggiungere    (potevo mettere diretto nel ciclo)
-        i = pos_re[0] + dx      
-        j = pos_re[1] + dy
+    #Prima posizione da aggiungere    (potevo mettere diretto nel ciclo)
+    i = pos_re[0] + dx      
+    j = pos_re[1] + dy
 
-        while i != pos_scacco[0]:       #oppure j!=pos_scacco[1]
-            pos.append((i,j)) 
-            i += dx
-            j += dy
+    while i != pos_scacco[0]:       #oppure j!=pos_scacco[1]
+        pos.append((i,j)) 
+        i += dx
+        j += dy
 
     return pos
 
@@ -124,8 +127,11 @@ def matto_da_singolo_scacco(scacchiera,giocatore,info_scacchi):
     #    - controlla che queste possano essere raggiunte da un mio pezzo (tranne il re!)  [raggiunte == destinations NON case_controllate!]
     pezzo_attaccante = scacchiera.get_pezzo(pos_scacco)
     if pezzo_attaccante.my_name().upper != "KNIGHT":
-        case_raggiungibili = case_raggiungibili_da_giocatore(scacchiera,giocatore,non_considerare_re=True)       
+        case_raggiungibili = case_raggiungibili_da_giocatore(scacchiera,giocatore,non_considerare_re=True)  
+        #print(f"{pos_re},{pos_scacco}")     
         case_in_mezzo = case_in_linea(pos_re,pos_scacco)
+        #print(f"[DEBUG] case raggiungibili {case_raggiungibili}")
+        #print(f"[DEBUG] case in mezzo {case_in_mezzo}")
         for pos in case_in_mezzo:
             if pos in case_raggiungibili:
                 return False       #vuol dire che posso interporre un mio pezzo
@@ -232,7 +238,7 @@ def get_possible_destination(scacchiera,piece,csrc,giocatore):
                     d_filtrate.append(pos)  
         else:#3)
             d_filtrate= re.destinations(scacchiera,csrc,giocatore)          #questo in realtà non ci sarebbe bisogno di farlo
-            
+
         d_set = set(destinations)
         d_filtrate_set = set(d_filtrate)
 

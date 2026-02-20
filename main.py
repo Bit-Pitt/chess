@@ -51,6 +51,10 @@ def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
 
 # Funzione un po troppo grossa
 def start_game(scacchiera,modalita="due giocatori"):
+
+    with open("ultimo_game.txt", "w") as f:     #salva la partita (per provarlo in debug se serve)
+        f.write("Ultimo game effettuato.\n")
+
     modalita="DEBUG"
     partita_debug = partite["attiva_in_debug"]
 
@@ -77,6 +81,7 @@ def start_game(scacchiera,modalita="due giocatori"):
             print(f"Game ended, winner: {g_NON_di_turno}")
             print("\n\n\n")
             break
+
 
         #prova mossa
         valid_move = False
@@ -106,6 +111,10 @@ def start_game(scacchiera,modalita="due giocatori"):
             if not valid_move:
                 print("Mossa non valida,  mossa effettuata:"+str(mossa))
 
+        #Salvo mossa su file      Per eff. si poteva salvare le mosse e scriverle tutte insieme dopo, ma mi serve per tenere dati in caso di crash..
+        with open("ultimo_game.txt", "a") as f:
+            f.write(f' "{mossa[0]} {mossa[1]} {mossa[2]}" ,\n')
+
         #cambio turno
         g_di_turno = g2 if g_di_turno == g1 else g1
 
@@ -128,7 +137,7 @@ if __name__ == "__main__":
         pw = Pedone("white")
         pb = Pedone("black")
         scacchiera.aggiungi_pezzo(pw,(1,i))
-        #scacchiera.aggiungi_pezzo(pb,(6,i))
+        scacchiera.aggiungi_pezzo(pb,(6,i))
    
  
     scacchiera.aggiungi_pezzo(Torre("white"),(0,0))
@@ -139,7 +148,7 @@ if __name__ == "__main__":
     scacchiera.aggiungi_pezzo(Re("white"),(0,4))
     scacchiera.aggiungi_pezzo(Re("black"),(7,4))
 
-    '''
+   
     scacchiera.aggiungi_pezzo(Alfiere("white"),(0,2))
     scacchiera.aggiungi_pezzo(Alfiere("white"),(0,5))
     scacchiera.aggiungi_pezzo(Alfiere("black"),(7,2))
@@ -152,9 +161,13 @@ if __name__ == "__main__":
 
     scacchiera.aggiungi_pezzo(Regina("white"),(0,3))
     scacchiera.aggiungi_pezzo(Regina("black"),(7,3))
-    '''
+   
    
     scacchiera.print()
+    #avvio GUI:        Lei è indipendente, la creo, poi ad ogni mossa nella logica la aggiorno.
+    #avvioGUI(scacchiera)
 
+    #Avvio logica di gioco
     start_game(scacchiera)
+
     print("Grazie per aver giocato")

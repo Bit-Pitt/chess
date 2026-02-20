@@ -1,7 +1,41 @@
 #######################################################
 ###      Qui le funzioni riguardanti aspetti grafici   /  User interface
 #######################################################
+import tkinter as tk
 
+H = 100         #Grandezza pixel di ogni casella
+W = 100
+
+
+def avvioGUI(scacchiera):
+    root = tk.Tk()
+    canvas = tk.Canvas(root, width=W*8, height=H*8)
+    canvas.pack()
+
+    canvas.bind("<Button-1>", click)
+    disegna_scacchiera(canvas)
+    disegna_pezzi(scacchiera)
+
+    root.mainloop()
+
+def disegna_pezzi(scacchiera):
+    pass
+
+# Funzione click
+def click(event):
+    col = event.x // W
+    row = event.y // H
+    row = 7 - row  # inverte righe
+    print("Hai cliccato:", row, col)
+    selected_square = (row, col)
+    #aggiorna_gui(evidenzia_square=selected_square)
+
+# Funzione per disegnare la scacchiera
+def disegna_scacchiera(canvas):
+    for r in range(8):
+        for c in range(8):
+            color = "gray" if (r + c) % 2 == 0 else "white"
+            canvas.create_rectangle(c*H, r*H, (c+1)*H, (r+1)*H, fill=color)
 
 
 

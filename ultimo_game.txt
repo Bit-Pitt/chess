@@ -1,0 +1,9 @@
+Ultimo game effettuato.
+ "p a2 a3" ,
+ "p f7 f5" ,
+ "p e2 e3" ,
+ "p a7 a6" ,
+ "q d1 h5" ,
+ "p g7 g6" ,
+ "p a3 a4" ,
+ "p g6 h5" ,
