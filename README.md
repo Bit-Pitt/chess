@@ -1,3 +1,7 @@
+[TODO]:
+- start_game (logica di fine partita)   "partita_finita()"
+- get_possible_destination: (logica per via degli scacchi, pin ...)
+
 Implementazione del gioco degli scacchi.
 
 
@@ -25,5 +29,11 @@ Classi:
 - main:  
     - funzioni di struttura generale del flow della partita
 
+
+Sequenza:
+- main :   (creazione scacchiera ... )
+    - start_game  (si occupa del cambio turno, ottenere la mossa in input...)
+        - muovi     (valida la mossa e la effettua, si avvale di "get_possible_destinations")
+                ==> get_possible_destinations --> controlla logica scacchi, e sfrutta i metodi dei pezzi.
 
 

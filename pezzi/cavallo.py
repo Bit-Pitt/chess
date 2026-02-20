@@ -27,7 +27,8 @@ class Cavallo(Pezzo):
 
         if DEBUG:
             DEBUG_print_caselle(dest,"possibili destinazioni del cavallo: ")
-        
+            
+        dest = self.filtro_inchiodatura(scacchiera,csrc,dest)
         return dest
     
     def case_controllate(self, scacchiera, csrc, giocatore):

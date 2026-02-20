@@ -13,10 +13,14 @@
 '''
 partite = {
     "attiva_in_debug":[
-            "P D2 D4", 
-            "P D7 D5",
-            "b c1 h7",
-            
+            "P A2 A3", 
+            "R A8 A3",
+            "R h1 g1",
+            "r h8 h7",
+            "r a1 b1",
+            "r a3 a1",
+            "p b2 b4",
+            "r h7 h6",
         ],
     "2":[
             "P A2 A3", 
@@ -32,7 +36,10 @@ partite = {
             "P H2 H4",
         ],
     "3":[
-            "P H2 H4",
+            "P A2 A3", 
+            "R A8 A3",
+            "R h1 g1",
+            "R a3 a1"
         ],
     "arrocco_1":[                   #es arrocco corto
             "P A2 A3", 

@@ -11,7 +11,7 @@ class Pedone(Pezzo):
         super().sposta(scacchiera,csrc,cdest)  
         self.mai_mosso = False
     
-
+    #[TODO] EN-passant --> devo riconoscere se ho un pedone di fianco che è stato mosso di 2 (serve aggiungere nello stato per ogni pedone)
     # Il pedone si muove di:
     # - 1) in avanti o due in avanti [se non ha pezzi in mezzo!]
     # - 2) se nelle due caselli diagonali ha un pezzo nemico anche quelle!
@@ -46,9 +46,6 @@ class Pedone(Pezzo):
                     dest.append(diag_sx) 
 
             diag_dx =   (csrc[0]+1,csrc[1]+1)
-
-            if scacchiera.casella_valida(diag_dx):
-                print(f"[DEBUG] Valida: {diag_dx}")
                 
             if scacchiera.casella_valida(diag_dx) and not scacchiera.casella_vuota(diag_dx):
                 piece = scacchiera.get_pezzo(diag_dx)
@@ -81,7 +78,9 @@ class Pedone(Pezzo):
                 piece = scacchiera.get_pezzo(diag_dx)
                 if piece.colore.upper() == "WHITE":
                     dest.append(diag_dx) 
-    
+
+        dest = self.filtro_inchiodatura(scacchiera,csrc,dest)
+
         return dest
     
     #Il pedone controlla le due case diagonali

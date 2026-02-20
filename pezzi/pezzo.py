@@ -27,7 +27,7 @@ class Pezzo:
     def destinations(self, scacchiera, csrc, giocatore):
         return (-1,-1)
     
-    # @return tutte le caselle controllate dal pezzo (diverse da quelle che può raggiungere) 
+    # @return tutte le caselle controllate dal pezzo (diverse da quelle che può raggiungere, es qui non considera pezzo pinnato) 
     def case_controllate(self, scacchiera, csrc, giocatore=""):
         return (-1,-1)
     
@@ -37,3 +37,37 @@ class Pezzo:
     #Tengo questa informazioni solo per Torre pedone e re
     def has_mai_mosso(self):
         return False
+    
+    #Se destinazioni del pezzo vanno filtrate se il pezzo è inchiodato, lo è se togliendo il pezzo aumenta di 1 gli scacchi che subisco [potrei già star ricevendone uno]
+    # in tal caso riconosco quale sia lo scacco che nasce dal togliere questo pezzo, e io potrò muovere questo pezzo SOLO nelle case in linea tra 
+    # questo scacco e il pezzo inchiodato.  (questo è come funziona l'inchiodatura lungo uno scacco) {inchiodatura lunga 2+ direzioni impossibile}
+    def filtro_inchiodatura(self,scacchiera,csrc,destinazioni):
+        case_mantengono_inchiodatura = []           #se pinnato queste sono le case che non espongono il re
+        # Controllo se pinnato 
+        info = info_scacchi(scacchiera,self.colore)
+        scacchiera.aggiungi_pezzo("empty",csrc)         #mi tolgo temporaneamente
+
+        info_nuove = info_scacchi(scacchiera,self.colore)
+
+        #riaggiungo pezzo
+        scacchiera.aggiungi_pezzo(self,csrc)
+        if info[0] < info_nuove[0]:
+            print(f"[DEBUG] pezzo pinnato  {self.my_name()}")
+        
+            #adesso devo riconoscere quale scacco è provocato dalla rimozione
+            scacchi = info_nuove[1::]                   #copia tutta la lista ad eccezione di l[0]
+            pos_re = scacchiera.get_pos_re(self.colore)             #mio re
+            for scacco in scacchi:
+                case_in_mezzo = case_in_linea(pos_re,scacco)
+                if csrc in case_in_mezzo:                                   #allora questo è la linea dell'inchiodatura
+                    case_mantengono_inchiodatura = case_in_mezzo
+
+            # finalmente adesso le destinazioni del pezzo sono le sue calcolate in precedenza da "destinations" ma che sono in linea con l'inchiodatura
+            ds = set(destinazioni)
+            cmis = set(case_mantengono_inchiodatura)
+            unione = ds & cmis
+
+            return list(unione)
+        
+        else:
+            return destinazioni

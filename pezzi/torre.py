@@ -31,7 +31,8 @@ class Torre(Pezzo):
 
         if DEBUG:
             DEBUG_print_caselle(dest,"possibili destinazioni da torre")
-        
+            
+        dest = self.filtro_inchiodatura(scacchiera,csrc,dest)
         return dest
     
     def case_controllate(self, scacchiera, csrc, giocatore):

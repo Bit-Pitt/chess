@@ -45,38 +45,145 @@ def info_scacchi(scacchiera,giocatore):
     for i in range(8):
         for j in range(8):
             pezzo = scacchiera.get_pezzo((i,j))
-            if pezzo != "empty" and pezzo.colore.upper() == avversario:
-                case = pezzo.case_controllate(scacchiera,(i,j), giocatore=avversario)
+            if pezzo != "empty" and pezzo.colore.upper() == avversario.upper():
+                case = pezzo.case_controllate(scacchiera,(i,j), giocatore=avversario)     #destinations sarebbe sbagliato (pensa al pedone)
                 if pos_re in case:
                     res.append((i,j))       #questo pezzo mi da scacco
                     count_scacchi += 1
     res.insert(0,count_scacchi)
     return res
 
+# @return lista di posizioni  [(i,j)...]
+#Restituisce la linea orrizzontale / verticale / diagonale di caselle da pos scacco a pos_re (non compresi)
+# caso orizzontale ==> hai la stessa i, prendi la minore j e vai verso la maggiore creando le posizioni  [i fissa]
+# caso verticale ==>  duale
+# caso diagonale ==> qui osservi gli indici e vedi che prendi le due posizioni  (i,j) (x,y)
+#     Adesso gli indici cambiano entrambi in 4 possibili modi (ovvero le 4 diagonali) per trattarli tutti insieme a partire dalla due posizioni:
+#       - se i<x  allora la prima coordinata ++1 ogni nuova posizione  (altrimenti --1) e duale per l'altra indipendetemente!
+def case_in_linea(pos_re,pos_scacco):
+    pos = []
+    #Orizzontale
+    if pos_re[0] == pos_scacco[0]:
+        i = pos_re[0]
+        left = min(pos_re[1],pos_scacco[1])
+        right = max(pos_re[1],pos_scacco[1])
+        for j in range(left+1,right):
+            pos.append((i,j))
+
+    #Verticale
+    if pos_re[1] == pos_scacco[1]:
+        j = pos_re[1]
+        left = min(pos_re[0],pos_scacco[0])
+        right = max(pos_re[0],pos_scacco[0])
+        for i in range(left+1,right):
+            pos.append((i,j))
+
+        #Diagonale    ["cammino" sulla diagonale da  "pos_re" --> "pos_scacco"]
+        if pos_re[0] < pos_scacco[0]:           #in questo caso andrà ++1 per i (devo salire la riga..)
+            dx = 1
+        else:
+            dx = -1 
+        if pos_re[1] < pos_scacco[1]:
+            dy = 1 
+        else:
+            dy = -1 
+
+        #Prima posizione da aggiungere    (potevo mettere diretto nel ciclo)
+        i = pos_re[0] + dx      
+        j = pos_re[1] + dy
+
+        while i != pos_scacco[0]:       #oppure j!=pos_scacco[1]
+            pos.append((i,j)) 
+            i += dx
+            j += dy
+
+    return pos
+
+# @return True se ho subito scacco matto da singolo scacco quindi:  
+#   1) Non possono muovere il re al sicuro   
+#   2) Non posso catturare pezzo che da scacco
+#   3) Non posso interporre un pezzo
+#  @param  "info_scacchi" sono le informazioni sugli scacchi dati dalla funzoine "info_scacchi"
+def matto_da_singolo_scacco(scacchiera,giocatore,info_scacchi):
+    #1) Condizione
+    pos_re = scacchiera.get_pos_re(giocatore)
+    re = scacchiera.get_pezzo(pos_re)
+    d = re.destinations(scacchiera,pos_re,giocatore)
+    if len(d) > 0:
+        return False
+
+    # 2°     [controllo se tra le destinazioni dei miei pezzi c'è la casella da cui ho ricevuto scacco]
+    pos_scacco = info_scacchi[1]        #Se ho un solo scacco qui ho la effettiva posizione di chi mi da scacco
+    case_controllate = case_controllate_da_giocatore(scacchiera,giocatore)
+    if pos_scacco in case_controllate:
+        return False
+    
+    # 3°   Interporre un pezzo:   
+    #    - vale solo se l'attaccante NON è un cavallo
+    #    - data la pos del re e casella che da scacco crea funzione che restituisce le caselle nella linea
+    #    - controlla che queste possano essere raggiunte da un mio pezzo (tranne il re!)  [raggiunte == destinations NON case_controllate!]
+    pezzo_attaccante = scacchiera.get_pezzo(pos_scacco)
+    if pezzo_attaccante.my_name().upper != "KNIGHT":
+        case_raggiungibili = case_raggiungibili_da_giocatore(scacchiera,giocatore,non_considerare_re=True)       
+        case_in_mezzo = case_in_linea(pos_re,pos_scacco)
+        for pos in case_in_mezzo:
+            if pos in case_raggiungibili:
+                return False       #vuol dire che posso interporre un mio pezzo
+
+    #se siamo arrivato fino a qui allora è scacco matto
+    print(f"[DEBUG] Scacco matto!")
+    return True
+
+
+
 # @ return 0 Se non finita
 # @ return 1 Se stallo
 # @ return 2: (se scacco matto) ovvero
 #   - 2.1 doppio scacco e re non può muovesi
 #   - 2.2 scacco e re non può muoversi / non si può interporre pezzo / catturare pezzo che da scacco
-def partita_finita(scacchiera,giocatore):
-    # 2.1
+def partita_finita(scacchiera,giocatore):        
     info = info_scacchi(scacchiera,giocatore)
     num_scacchi = info[0]
+
+    # 1 (stallo --> no sotto scacco, ma zero dest per ogni mio pezzo)
+    dest = []
+    if num_scacchi==0:
+        is_stallo = True
+        for i in range(8):
+            if not is_stallo:
+                    break
+            for j in range(8):
+                if not is_stallo:
+                    break
+                pezzo = scacchiera.get_pezzo((i,j))
+                if pezzo != "empty" and pezzo.colore.upper() == giocatore.upper():
+                    dest = pezzo.destinations(scacchiera, (i,j), giocatore) 
+                    if len(dest) >= 1: 
+                        is_stallo = False
+                       
+        if is_stallo:
+            return 1
+
+
+    # 2.1
     if num_scacchi >= 2 :
         pos_re = scacchiera.get_pos_re(giocatore)
         re = scacchiera.get_pezzo(pos_re)
         d = re.destinations(scacchiera,pos_re,giocatore)
         if len(d) == 0:
             return 2
-    #[TODO]
-
+        
+    # 2.2 wrappato in funzione
+    if num_scacchi == 1:
+        if matto_da_singolo_scacco(scacchiera,giocatore,info):
+            return 2
 
     return 0
 
 
 '''    
     La funzione restituisce le destinazioni possibili del pezzo ma fa controlli preventivi
-    - controlla doppio scacco   [devi muovere re / se non puoi end-game]
+    - controlla doppio scacco   [devi muovere re ]
     - scacco            [ muovi re / interponi pezzo / catturi pezzo che da scacco]
     - altrimenti restituisci le destinazioni possibili del pezzo selezionato
 
@@ -85,7 +192,6 @@ def partita_finita(scacchiera,giocatore):
       La funzione restituisce:
      - CASO GENERALE: lista di coppie (i,j) ovvero la posizione di destinazione del pezzo
      - CASI SPECIALI:
-           - "end-game", se la partita è finita
            - "(i,j,"arrocco")", in tal caso si fa un controllo preventivo
     }
 '''
@@ -106,10 +212,33 @@ def get_possible_destination(scacchiera,piece,csrc,giocatore):
                 
         
     # scacco singolo
+    # 1) in questo caso se quel determinato pezzo può catturare chi da scacco ok
+    # 2) se non è il re e può interporsi ok
+    # 3) se è il re e va in una posizione non attaccata ok 
+    if num_scacchi == 1:
+        destinations = piece.destinations(scacchiera,csrc,giocatore)
+        d_filtrate = []
+        pos_scacco = info[1]
+        if pos_scacco in destinations:      #1) aggiungo questa dest possibile (cattura pezzo che da scacco)   
+            d_filtrate.append(pos_scacco)
 
-    # LOGICA DA AGGIUNGERE
-    # pezzo pinnato
-    # aggiungi mossa en-passant   
+        pos_re = scacchiera.get_pos_re(giocatore)
+        re = scacchiera.get_pezzo(pos_re)
+        #2)
+        if piece.my_name() != "King":
+            case_in_mezzo = case_in_linea(pos_re,pos_scacco)  
+            for pos in case_in_mezzo:
+                if pos != csrc:
+                    d_filtrate.append(pos)  
+        else:#3)
+            d_filtrate= re.destinations(scacchiera,csrc,giocatore)          #questo in realtà non ci sarebbe bisogno di farlo
+            
+        d_set = set(destinations)
+        d_filtrate_set = set(d_filtrate)
+
+        return d_set & d_filtrate_set
+
+
     destinations = piece.destinations(scacchiera,csrc,giocatore)
     return destinations
 
@@ -304,9 +433,13 @@ def DEBUG_print_caselle(positions,str=""):
     print()
 
 
-# @return TUTTE le case controllate dal giocatore, se "togli_re = True" si fa la stessa cosa ma togliendo temporaneamente il re del giocatore "colore_re", motivo in re.destinations
-def case_controllate_da_giocatore(scacchiera,giocatore,togli_re=False,colore_re=""):
-    if togli_re == True:    #tolgo temp il re
+# @return TUTTE le case controllate dal giocatore
+# -  se "togli_re = True" si fa la stessa cosa ma togliendo temporaneamente il re del giocatore "colore_re", motivo in re.destinations
+# - se "Non_considerare_re" allora il re non partecipa alle case controllate
+def case_controllate_da_giocatore(scacchiera,giocatore,togli_re=False,colore_re="", non_considerare_re=False):
+    if togli_re:    #tolgo temp il re   
+        if colore_re=="":
+            raise Exception("Aggiungi il colore del re")
         pos_re = scacchiera.get_pos_re(colore_re)
         re = scacchiera.get_pezzo(pos_re)
         scacchiera.aggiungi_pezzo("empty",pos_re)
@@ -315,14 +448,33 @@ def case_controllate_da_giocatore(scacchiera,giocatore,togli_re=False,colore_re=
     for i in range(8):
         for j in range(8):
             pezzo = scacchiera.get_pezzo((i,j))
+
             if pezzo != "empty" and pezzo.colore.upper() == giocatore.upper():
-                case.update(pezzo.case_controllate(scacchiera,(i,j),giocatore)) 
+                if non_considerare_re and pezzo.my_name().upper() == "KING":
+                        continue
+                else:
+                    case.update(pezzo.case_controllate(scacchiera,(i,j),giocatore)) 
     #rimetto il re
-    if togli_re == True:    #rimetto
+    if togli_re:    #rimetto
         scacchiera.aggiungi_pezzo(re,pos_re)
 
     return list(case)
 
+# @return TUTTE le case raggiungibili dal giocatore  (destinations)
+# - se "Non_considerare_re" allora il re non partecipa alle case raggiungibili 
+def case_raggiungibili_da_giocatore(scacchiera,giocatore,non_considerare_re=True):
+    case = set()
+    for i in range(8):
+        for j in range(8):
+            pezzo = scacchiera.get_pezzo((i,j))
+
+            if pezzo != "empty" and pezzo.colore.upper() == giocatore.upper():
+                if non_considerare_re and pezzo.my_name().upper() == "KING":
+                        continue
+                else:
+                    case.update(pezzo.destinations(scacchiera,(i,j),giocatore)) 
+
+    return list(case)
 
 
 # input:  lista  [(i,j)...], potenzialmente mosse speciali come arrocco: (i,j,"arrocco")

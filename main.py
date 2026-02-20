@@ -122,12 +122,14 @@ if __name__ == "__main__":
     #Creazione schacchiera e pezzi
     scacchiera = Scacchiera()
 
+  
     # es pedoni biani --> 2°riga in tutte le col quindi  [1,*]
     for i in range(8):
         pw = Pedone("white")
         pb = Pedone("black")
         scacchiera.aggiungi_pezzo(pw,(1,i))
-        scacchiera.aggiungi_pezzo(pb,(6,i))
+        #scacchiera.aggiungi_pezzo(pb,(6,i))
+   
  
     scacchiera.aggiungi_pezzo(Torre("white"),(0,0))
     scacchiera.aggiungi_pezzo(Torre("white"),(0,7))
@@ -137,6 +139,7 @@ if __name__ == "__main__":
     scacchiera.aggiungi_pezzo(Re("white"),(0,4))
     scacchiera.aggiungi_pezzo(Re("black"),(7,4))
 
+    '''
     scacchiera.aggiungi_pezzo(Alfiere("white"),(0,2))
     scacchiera.aggiungi_pezzo(Alfiere("white"),(0,5))
     scacchiera.aggiungi_pezzo(Alfiere("black"),(7,2))
@@ -149,7 +152,7 @@ if __name__ == "__main__":
 
     scacchiera.aggiungi_pezzo(Regina("white"),(0,3))
     scacchiera.aggiungi_pezzo(Regina("black"),(7,3))
-
+    '''
    
     scacchiera.print()
 

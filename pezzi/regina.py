@@ -41,6 +41,7 @@ class Regina(Pezzo):
         if DEBUG:
             DEBUG_print_caselle(dest,"possibili destinazioni della regina : ")
         
+        dest = self.filtro_inchiodatura(scacchiera,csrc,dest)
         return dest
     
     #Analogo
