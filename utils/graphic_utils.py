@@ -151,21 +151,29 @@ class ChessGUI:
         
         self.aggiorna_gui()
 
-        if self.partita.check_fine_partita():
-            self.root.after(300, self.mostra_fine_partita)
+        res = self.partita.check_fine_partita()
+        if res[0]:
+            self.root.after(300, self.mostra_fine_partita(res[1]))
         
 
-    def mostra_fine_partita(self):
+    def mostra_fine_partita(self,vincitore):
         self.canvas.create_rectangle(
             0, 0, self.W*8, self.H*8,
             fill="black",
             stipple="gray50"
         )
+        stringa_output=""
+        if vincitore.upper() == "WHITE":
+            stringa_output = "Vincitore: Player White"
+        elif vincitore.upper() == "BLACK":
+            stringa_output = "Vincitore: Player Black"
+        else:
+            stringa_output = "Partita finita in patta"
 
         self.canvas.create_text(
             self.W*4,
             self.H*4,
-            text="PARTITA FINITA",
+            text=stringa_output,
             fill="white",
             font=("Arial", 40, "bold")
         )

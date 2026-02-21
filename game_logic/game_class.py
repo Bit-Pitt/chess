@@ -74,13 +74,13 @@ class Game:
 
         if res == 1:
             print("Patta")
-            return True
+            return [True,"PATTA"]
         elif res == 2:
             g_NON_di_turno = self.g2 if self.turno == self.g1 else self.g1
             print("Vince:", g_NON_di_turno)
-            return True
+            return [True,g_NON_di_turno.upper() ]
 
-        return False
+        return [False]
     
     # MOSSA VALIDA se la dest è una possibile destinazione
     # @input (es nome=P csrc=(1,0) cdest=(2,0))  {primo pedone A2 to A3}
