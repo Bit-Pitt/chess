@@ -28,6 +28,7 @@ class Re(Pezzo):
 
         #1)
         dest = movimento_re(scacchiera,csrc,destinazioni=True)
+        
         #2)
         avversario = nome_avversario(giocatore)
         controllate_da_avversario = case_controllate_da_giocatore(scacchiera,

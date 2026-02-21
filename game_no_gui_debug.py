@@ -1,0 +1,108 @@
+
+from partite_debug import partite
+from utils.graphic_utils import *
+from utils.logic_utils import *
+
+
+
+#Attenzione che "muovi" potrebbe essere cambiato ...
+           
+def muovi(scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
+    pos = (csrc[0],csrc[1])
+    piece = scacchiera.get_pezzo(pos)
+    if not controlla_nome(piece,nome) or not controlla_giocatore(giocatore,piece):
+        return False
+    
+    
+    possibili_dest = get_possible_destination(scacchiera,piece,csrc,giocatore)
+
+    mosse_arrocco = trova_special_move(possibili_dest,"Arrocco")        #hai desso sai le (i,j) che sono in realtà degli arrocchi
+
+    if cdest in mosse_arrocco:
+        effettua_arrocco(scacchiera,cdest)
+        return True
+
+    if cdest in possibili_dest:
+        pezzo_perso = piece.sposta(scacchiera,csrc,cdest)
+        if pezzo_perso != "empty":
+            pezzi_persi.append(pezzo_perso)
+        return True
+    else:
+        return False
+
+
+# Funzione un po troppo grossa
+def start_game(scacchiera,modalita="due giocatori"):
+
+    with open("ultimo_game.txt", "w") as f:     #salva la partita (per provarlo in debug se serve)
+        f.write("Ultimo game effettuato.\n")
+
+    modalita="DEBUG"
+    partita_debug = partite["attiva_in_debug"]
+
+    g1= "White"         #giocatori  
+    g2 = "Black"
+    g_di_turno = g1
+    pezzi_persi_w,pezzi_persi_b = [] , []
+
+    #ciclo di gioco
+    while (True):
+        print(g_di_turno+" turn")
+        g_NON_di_turno = g2 if g_di_turno == g1 else g1
+        pezzi_persi = pezzi_persi_b if g_di_turno == g1 else pezzi_persi_w      #es se turno del White allora può perderli il black
+
+        #Controlla se partita finita
+        res = partita_finita(scacchiera,g_di_turno)
+        if res == 1:
+            print("\n\n\n")
+            print(f"Game ended for stalemate")
+            print("\n\n\n")
+            break
+        elif res == 2:
+            print("\n\n\n")
+            print(f"Game ended, winner: {g_NON_di_turno}")
+            print("\n\n\n")
+            break
+
+
+        #prova mossa
+        valid_move = False
+        while not valid_move:
+            mossa = []
+            
+            if modalita == "due giocatori" or len(partita_debug) == 0:
+                mossa = input("Immetti mossa: (es pedone da A2 a A3 -->  P A2 A3):  ")
+                print("- per arrocco:  K [src] [dest]")
+            if modalita == "DEBUG" and len(partita_debug) > 0:
+                mossa = partita_debug[0]
+                partita_debug.pop(0)
+                if len(partita_debug) == 0:
+                    print("Da adesso partita interattiva")
+            
+            
+            mossa = mossa.split()
+            if len(mossa) != 3 or not controlla_input(mossa):
+                valid_move = False
+            else:
+                nome= traduci_nome(mossa[0])
+                csrc = stringTOpos(mossa[1])   
+                cdest = stringTOpos(mossa[2])             
+                valid_move = muovi(scacchiera, nome, csrc, cdest, g_di_turno,pezzi_persi)
+            
+
+            if not valid_move:
+                print("Mossa non valida,  mossa effettuata:"+str(mossa))
+
+        #Salvo mossa su file      Per eff. si poteva salvare le mosse e scriverle tutte insieme dopo, ma mi serve per tenere dati in caso di crash..
+        with open("ultimo_game.txt", "a") as f:
+            f.write(f' "{mossa[0]} {mossa[1]} {mossa[2]}" ,\n')
+
+        #cambio turno
+        g_di_turno = g2 if g_di_turno == g1 else g1
+
+        scacchiera.print()
+        print(vantaggio(scacchiera))
+
+
+def partita_no_gui(scacchiera):
+    start_game(scacchiera)

@@ -22,7 +22,7 @@ def valore_pezzo(pezzo):
 
 #controlla che il pezzo sia del giocatore
 def controlla_giocatore(giocatore,pezzo):
-    if giocatore.upper() != pezzo.my_name().upper():
+    if giocatore.upper() != pezzo.colore.upper():
         return False
     else:
         return True
@@ -115,9 +115,9 @@ def matto_da_singolo_scacco(scacchiera,giocatore,info_scacchi):
     if len(d) > 0:
         return False
 
-    # 2°     [controllo se tra le destinazioni dei miei pezzi c'è la casella da cui ho ricevuto scacco]
+    # 2°     [controllo se tra le destinazioni dei miei pezzi {tranne il re} c'è la casella da cui ho ricevuto scacco]
     pos_scacco = info_scacchi[1]        #Se ho un solo scacco qui ho la effettiva posizione di chi mi da scacco
-    case_controllate = case_controllate_da_giocatore(scacchiera,giocatore)
+    case_controllate = case_controllate_da_giocatore(scacchiera,giocatore,non_considerare_re=True)
     if pos_scacco in case_controllate:
         return False
     
@@ -205,6 +205,13 @@ def get_possible_destination(scacchiera,piece,csrc,giocatore):
     #controlla se doppio-scacco in tal caso solo il re può muoversi 
     info = info_scacchi(scacchiera,giocatore)
     num_scacchi = info[0]
+
+    debug=True
+    if debug:
+        print(f"DEBUG: giocatore: {giocatore}")
+        print(f"[DEBUG] Chiamata 'get_poss_dests su: {piece.print_my_name()}")
+        print(f"[DEBUG] Info scacchi {info}")
+
     if num_scacchi >= 2 :
         pos_re = scacchiera.get_pos_re(giocatore)
         re = scacchiera.get_pezzo(pos_re)
@@ -222,6 +229,7 @@ def get_possible_destination(scacchiera,piece,csrc,giocatore):
     # 2) se non è il re e può interporsi ok
     # 3) se è il re e va in una posizione non attaccata ok 
     if num_scacchi == 1:
+
         destinations = piece.destinations(scacchiera,csrc,giocatore)
         d_filtrate = []
         pos_scacco = info[1]
@@ -238,6 +246,7 @@ def get_possible_destination(scacchiera,piece,csrc,giocatore):
                     d_filtrate.append(pos)  
         else:#3)
             d_filtrate= re.destinations(scacchiera,csrc,giocatore)          #questo in realtà non ci sarebbe bisogno di farlo
+    
 
         d_set = set(destinations)
         d_filtrate_set = set(d_filtrate)
@@ -353,8 +362,17 @@ def movimento_re(scacchiera,csrc,destinazioni=False,case_controllate=False):
     #filtra se valida 
     dest = [ pos for pos in dest if scacchiera.casella_valida(pos)   ]
 
-    if destinazioni:    #se guardiamo le destinazioni allora devono essere vuote
-        dest = [ pos for pos in dest if scacchiera.casella_vuota(pos)   ]
+    if destinazioni:    #se guardiamo le destinazioni allora devono essere vuote (o pezzo nemico)   [MODIFICATO QUESTO]
+        tmp = []
+        for pos in dest:
+            if scacchiera.casella_vuota(pos):
+                tmp.append(pos) 
+            else:
+                piece = scacchiera.get_pezzo(csrc)
+                pezzo = scacchiera.get_pezzo(pos)
+                if pezzo.colore.upper() != piece.colore.upper():
+                    tmp.append(pos) 
+        dest = tmp    
         
     return dest
 

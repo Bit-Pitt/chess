@@ -1,6 +1,7 @@
-[TODO]:
-- start_game (logica di fine partita)   "partita_finita()"
-- get_possible_destination: (logica per via degli scacchi, pin ...)
+[TODO]
+- bugfix ==> sembra che non si controlla di chi sia il turno! (di quale pezzo) [il pedone all'indietro!]
+- promozione
+- en passant
 
 Implementazione del gioco degli scacchi.
 
@@ -23,17 +24,25 @@ Classi:
 
 - scacchiera, riguarda un determinato tipo di scacchiera (standard:la classica)
 
+- Game (incapsula la scacchiera e in generaile il "gioco")
+
 - utils:
     - funzioni per il funzionamento del gioco, o logica in generale non strettamente correlata ad un pezzo o la scacchiera [potrebbero implementare una interfaccia]
 
 - main:  
-    - funzioni di struttura generale del flow della partita
+    - creazione GUI e Game
 
 
-Sequenza:
+Sequenza Vecchia:
 - main :   (creazione scacchiera ... )
     - start_game  (si occupa del cambio turno, ottenere la mossa in input...)
         - muovi     (valida la mossa e la effettua, si avvale di "get_possible_destinations")
                 ==> get_possible_destinations --> controlla logica scacchi, e sfrutta i metodi dei pezzi.
+
+
+Sequenza Nuova:
+- main :   (creazione Gui e Game)
+    - la gui cattura le mosse e "invia" alla classe Game
+
 
 

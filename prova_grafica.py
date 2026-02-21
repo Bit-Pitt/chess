@@ -63,6 +63,7 @@ def evidenzia_casella(square):
     )
 
 
+
 def aggiorna_gui(evidenzia_square=None):
     canvas.delete("all")
     disegna_scacchiera()

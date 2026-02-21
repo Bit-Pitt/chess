@@ -13,27 +13,24 @@
 '''
 partite = {
     "attiva_in_debug":[
-             "p a2 a3" ,
-                "p f7 f5" ,
-                "p e2 e3" ,
-                "p a7 a6" ,
-                "q d1 h5" ,
-                "p g7 g6" ,
-                "p a3 a4" ,
-                "p g6 h5"
+             "P E2 E4" ,
+             "P E7 E5" ,
+            "Q D1 F3" ,
+            "P A7 A6" ,
+            "B F1 C4" ,
+            "C B8 C6" ,
+            "Q F3 F7" ,
+      
+            
         ],
     "2":[
-            "P A2 A3", 
-            "P B7 B5",
-            "R A1 A2",
-            "P A7 A5",
-            "P B2 B4",
-            "P A5 B4",
-            "P A3 B4",
-            "R  A8 A6",
-            "K E1 D1",
-            "R A6 A2",
-            "P H2 H4",
+         "P E7 E5" ,
+            "Q D1 F3" ,
+            "P A7 A6" ,
+            "B F1 C4" ,
+            "C B8 C6" ,
+            "Q F3 F7" ,
+      
         ],
     "3":[
             "P A2 A3", 
