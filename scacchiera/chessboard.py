@@ -1,3 +1,4 @@
+from pezzi.regina import Regina
 
 # Classe per la scacchiera classica
 class Scacchiera:
@@ -94,4 +95,42 @@ class Scacchiera:
                 if pezzo != "empty" and pezzo.my_name() == "King" and pezzo.colore.upper() == giocatore.upper():
                     return (i,j)
         raise Exception("Re non trovato ?!")
-      
+    
+    # E' di promozione se si ha un pedone bianco in 8° o nero in 1° riga
+    def controlla_casa_promo(self,pos):
+        if  self.casella_vuota(pos):
+            return False
+        pezzo = self.get_pezzo(pos)  
+        if pezzo.my_name().upper() != "PAWN":
+            return False
+        
+        if pezzo.colore.upper() == "WHITE" and pos[0] == 7:
+            return True
+        if pezzo.colore.upper() == "BLACK" and pos[0] == 0:
+            return True
+        return False
+        
+        
+
+    # Es:  promuovi("Regina") --> promuoverà il pezzo a regina (solo uno può essere da promuovere)
+    # Cerco il pezzo nella prima o ultima riga
+    def promuovi(self,nome_pezzo):
+        casa_promozione = (-1,-1)
+        for i in range(8):
+            prima_riga = (0,i)
+            ultima_riga = (7,i)
+            if self.controlla_casa_promo(prima_riga):
+                casa_promozione = prima_riga
+                break
+            if self.controlla_casa_promo(ultima_riga):
+                casa_promozione = ultima_riga
+                break
+        if casa_promozione == (-1,-1):
+            raise Exception("Non è stata trovata casa di promozione, internal error")
+        
+        #Qui wrappa in fun
+        pezzo = self.get_pezzo(casa_promozione)
+        if pezzo.colore.upper() == "WHITE":
+            self.aggiungi_pezzo(Regina("white"),casa_promozione)
+        else:
+            self.aggiungi_pezzo(Regina("black"),casa_promozione)

@@ -139,7 +139,14 @@ class ChessGUI:
             # crea la mossa nel formato usato fino ad ora es "P A2 A3" 
             stringa_mossa = crea_stringa(self.mossa,self.partita.get_board())
             # "inviala" alla scacchiera
-            self.partita.processa_mossa(stringa_mossa)
+            res = self.partita.processa_mossa(stringa_mossa)
+            
+            #Controllo se c'è una promozione
+            if len(res)>1:
+                print("PROMOZIONE AUTOMATICA A REGINA:")
+                # ... aggiungi gui
+                self.partita.promuovi("Queen")
+                self.partita.get_board().print()
             self.mossa = []
         
         self.aggiorna_gui()

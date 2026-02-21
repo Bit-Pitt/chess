@@ -24,13 +24,14 @@ class Game:
     def get_board(self):
         return self.scacchiera
 
+    # @return  [True/False] caso generico,  [True,"Promozione"] se necessita di promozione
     def processa_mossa(self, mossa_stringa):
 
         mossa = mossa_stringa.split()
 
         if len(mossa) != 3 or not controlla_input(mossa):
             print("Input non valido")
-            return False
+            return [False]
 
         nome = traduci_nome(mossa[0])
         csrc = stringTOpos(mossa[1])
@@ -41,7 +42,7 @@ class Game:
             else self.pezzi_persi_w
         )
         print(f"[DEBUG] parametri: {nome} {csrc} {cdest} {self.turno} {pezzi_persi} ")
-        valid_move = self.muovi(
+        res = self.muovi(
             self.scacchiera,
             nome,
             csrc,
@@ -49,12 +50,11 @@ class Game:
             self.turno,
             pezzi_persi
         )
-
+        valid_move = res[0]
         if not valid_move:
             print("Mossa non valida")
-            return False
+            return [False]
         else:
-
             # salva su file
             with open("ultimo_game.txt", "a") as f:
                 f.write(f' "{mossa_stringa}" ,\n')
@@ -64,7 +64,10 @@ class Game:
             self.turno = self.g2 if self.turno == self.g1 else self.g1
 
             self.scacchiera.print()     #per debug su terminale
-            return True
+
+            if len(res) > 1:  
+                return [True,"Promozione"]
+            return [True]
 
     def check_fine_partita(self):
         res = partita_finita(self.scacchiera, self.turno)
@@ -79,15 +82,16 @@ class Game:
 
         return False
     
-        # MOSSA VALIDA se la dest è una possibile destinazione
+    # MOSSA VALIDA se la dest è una possibile destinazione
     # @input (es nome=P csrc=(1,0) cdest=(2,0))  {primo pedone A2 to A3}
     # @param scacchiera , nome pezzo, casella src, casella dest , pezzi_persi 
+    # @return [True] se mossa valida, [True,"Promozione"] se c'è una promozione
     # COSA FA: controlla se la mossa è valida e in tal caso la effettua             
     def muovi(self,scacchiera, nome, csrc, cdest,giocatore,pezzi_persi):
         pos = (csrc[0],csrc[1])
         piece = scacchiera.get_pezzo(pos)
         if not controlla_nome(piece,nome) or not controlla_giocatore(giocatore,piece):
-            return False
+            return [False]
       
         # Qui avverranno tutti i controlli (scacco ... )
         possibili_dest = get_possible_destination(scacchiera,piece,csrc,giocatore)
@@ -96,6 +100,7 @@ class Game:
         # - CASO GENERALE: lista di coppie (i,j) ovvero la posizione di destinazione del pezzo
         # - CASI SPECIALI:
         #       - "(i,j,"arrocco")", in tal caso si fa un controllo preventivo
+        # - PROMOTION
         # Quindi prima controllo i casi particolari come arrocco / fine partita, altrimenti il caso generico in fondo
 
         
@@ -104,13 +109,17 @@ class Game:
 
         if cdest in mosse_arrocco:
             effettua_arrocco(scacchiera,cdest)
-            return True
+            return [True]
 
         # caso generico:  se la destinazione scelta dall'user "cdest" è nelle destinazioni del pezzo allora esegui (già fatti tutti i controlli necessari)
         if cdest in possibili_dest:
-            pezzo_perso = piece.sposta(scacchiera,csrc,cdest)
-            if pezzo_perso != "empty":
-                pezzi_persi.append(pezzo_perso)
-            return True
+            stringa_promo = piece.sposta(scacchiera,csrc,cdest)
+            if stringa_promo.upper() == "PROMOZIONE":
+                return [True,"Promozione"]
+            return [True]
         else:
-            return False
+            return [False]
+    
+    # Es:  promuovi("Regina") --> promuoverà il pezzo a regina (solo uno può essere da promuovere)
+    def promuovi(self,nome_pezzo):
+        self.scacchiera.promuovi(nome_pezzo)

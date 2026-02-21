@@ -18,10 +18,10 @@ class Pezzo:
         posD = (cdest[0],cdest[1])
         if not scacchiera.casella_vuota(cdest):
             print("Catturato un pezzo!")
-            pezzo_catturato =  scacchiera.get_pezzo(posD)
+            #pezzo_catturato =  scacchiera.get_pezzo(posD)
 
         scacchiera.aggiungi_pezzo(self,posD)
-        return pezzo_catturato
+        return "Non Promozione"
 
     #   @return tutte le caselle che il pezzo può raggiungere da quella posizione
     def destinations(self, scacchiera, csrc, giocatore):

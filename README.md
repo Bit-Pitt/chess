@@ -1,6 +1,4 @@
 [TODO]
-- bugfix ==> sembra che non si controlla di chi sia il turno! (di quale pezzo) [il pedone all'indietro!]
-- promozione
 - en passant
 
 Implementazione del gioco degli scacchi.
@@ -29,6 +27,9 @@ Classi:
 - utils:
     - funzioni per il funzionamento del gioco, o logica in generale non strettamente correlata ad un pezzo o la scacchiera [potrebbero implementare una interfaccia]
 
+- GUI: 
+    - gestisce la gui
+
 - main:  
     - creazione GUI e Game
 
@@ -41,8 +42,17 @@ Sequenza Vecchia:
 
 
 Sequenza Nuova:
+Versione Interattiva:
 - main :   (creazione Gui e Game)
     - la gui cattura le mosse e "invia" alla classe Game
+Versione Debug:
+- come la vecchia  [ogni partita salvata in "ultimo_game.txt" così da poter mettere in "partite_debug.py" e provarla] {ma non ha alcuni aggiornamenti}
 
 
-
+Aspetti importanti notati:
+- modularità del codice fondamentale
+- indipendenza dei moduli
+- incapsulamento in classi aiuta tantissimi la modularità
+- tutto ciò che è "Hard-coded"  (es "WHITE" "BLACK", le celle della scacchiera tipo for i in range(8) ... ) non permetteranno eventuali 
+    estensioni senza dover cambiare tutto il codice --> meglio che questi diventassero lo stato della scacchiera e poi si estendeva cambiano
+    scacchiera (ovvero un altro oggetto della classe!)

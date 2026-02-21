@@ -7,9 +7,16 @@ class Pedone(Pezzo):
         self.nome = "pawn"
         self.mai_mosso = True   #serve per poter giocare la prima mossa da due salti 
 
+    # @return se arrivato a promozione
     def sposta(self,scacchiera,csrc,cdest):
         super().sposta(scacchiera,csrc,cdest)  
         self.mai_mosso = False
+        if self.colore.upper() == "WHITE" and cdest[0] == 7:
+            return "Promozione"
+        if self.colore.upper() == "BLACK" and cdest[0] == 0:
+            return "Promozione"
+        return "NonPromozione"
+        
     
     #[TODO] EN-passant --> devo riconoscere se ho un pedone di fianco che è stato mosso di 2 (serve aggiungere nello stato per ogni pedone)
     # Il pedone si muove di:

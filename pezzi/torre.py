@@ -10,9 +10,9 @@ class Torre(Pezzo):
         self.mai_mosso = True   #per possibile arrocco
 
     def sposta(self,scacchiera,csrc,cdest):
-        super().sposta(scacchiera,csrc,cdest)  
+        res = super().sposta(scacchiera,csrc,cdest)  
         self.mai_mosso = False
-    
+        return res
 
     # Le possibili destinazioni della torre:
     # - 1) si muove a  "+"  [destinazioni si blocca se incontra un pezzo nemico / amico e sono casi diversi]

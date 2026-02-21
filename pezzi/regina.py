@@ -10,7 +10,7 @@ class Regina(Pezzo):
         
 
     def sposta(self,scacchiera,csrc,cdest):
-        super().sposta(scacchiera,csrc,cdest)  
+        return super().sposta(scacchiera,csrc,cdest)  
 
     
 

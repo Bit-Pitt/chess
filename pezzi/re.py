@@ -10,9 +10,9 @@ class Re(Pezzo):
         self.mai_mosso = True   #per possibile arrocco
 
     def sposta(self,scacchiera,csrc,cdest):
-        super().sposta(scacchiera,csrc,cdest)  
+        res = super().sposta(scacchiera,csrc,cdest)  
         self.mai_mosso = False
-    
+        return res
 
     # Possibili destinazioni re:
     # - 1) tutte le direzioni ma una casella di passo
