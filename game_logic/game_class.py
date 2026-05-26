@@ -1,4 +1,21 @@
+'''
+Opzione 1 — GameRules / RulesEngine (classe statica/utility)
+Incapsuli le funzioni in una classe senza stato, con metodi statici:
+pythonclass GameRules:
+    @staticmethod
+    def controlla_giocatore(giocatore, pezzo):
+        return giocatore.upper() == pezzo.colore.upper()
 
+    @staticmethod
+    def nome_avversario(giocatore):
+        return "BLACK" if giocatore.upper() == "WHITE" else "WHITE"
+
+    @staticmethod
+    def info_scacchi(scacchiera, giocatore):
+        ...
+Pro: tutto è OOP, organizzato, importabile come oggetto.
+Contro: è essenzialmente un "namespace travestito da classe" — non porta vero vantaggio OOP perché non ha stato né ereditarietà.
+'''
 from utils.graphic_utils import *
 from utils.logic_utils import *
 
