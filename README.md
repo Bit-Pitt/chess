@@ -1,5 +1,7 @@
 [TODO]
+- FIX: inchiodatura da sistemare (-->potrebbe non vedere matti perchè non riconosce inchiodatura)
 - en passant
+
 
 Implementazione del gioco degli scacchi.
 

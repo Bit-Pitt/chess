@@ -117,7 +117,7 @@ def matto_da_singolo_scacco(scacchiera,giocatore,info_scacchi):
 
     # 2°     [controllo se tra le destinazioni dei miei pezzi {tranne il re} c'è la casella da cui ho ricevuto scacco]
     pos_scacco = info_scacchi[1]        #Se ho un solo scacco qui ho la effettiva posizione di chi mi da scacco
-    case_controllate = case_controllate_da_giocatore(scacchiera,giocatore,non_considerare_re=True)
+    case_controllate = case_raggiungibili_da_giocatore(scacchiera,giocatore,non_considerare_re=True)
     if pos_scacco in case_controllate:
         return False
     
